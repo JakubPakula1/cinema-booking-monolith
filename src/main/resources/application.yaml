@@ -1,3 +1,14 @@
 spring:
   application:
     name: cinema-booking-monolith
+  datasource:
+    url: jdbc:postgresql://localhost:5432/cinema_booking
+    username: cinema_user
+    password: cinema_password
+    driver-class-name: org.postgresql.Driver
+  jpa:
+    hibernate:
+      ddl-auto: update
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
