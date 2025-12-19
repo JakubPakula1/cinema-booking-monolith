@@ -1,7 +1,11 @@
 package io.github.jakubpakula1.cinema.model;
 
 import jakarta.persistence.*;
+import lombok.Getter;
+import lombok.Setter;
 
+@Setter
+@Getter
 @Entity
 @Table(name = "seats")
 public class Seat {
@@ -19,35 +23,4 @@ public class Seat {
     public Seat() {
     }
 
-    public int getId() {
-        return id;
-    }
-
-    public void setId(int id) {
-        this.id = id;
-    }
-
-    public int getRowNumber() {
-        return rowNumber;
-    }
-
-    public void setRowNumber(int rowNumber) {
-        this.rowNumber = rowNumber;
-    }
-
-    public int getSeatNumber() {
-        return seatNumber;
-    }
-
-    public void setSeatNumber(int seatNumber) {
-        this.seatNumber = seatNumber;
-    }
-
-    public Room getRoom() {
-        return room;
-    }
-
-    public void setRoom(Room room) {
-        this.room = room;
-    }
 }
