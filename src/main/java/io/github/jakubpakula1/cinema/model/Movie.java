@@ -22,8 +22,8 @@ public class Movie {
     private String description;
 
     private String genre;
-
-    private int durationMinutes;
+    @Column(name = "duration_minutes")
+    private int durationInMinutes;
 
     private String posterUrl;
 
@@ -37,7 +37,7 @@ public class Movie {
         this.title = title;
         this.description = description;
         this.genre = genre;
-        this.durationMinutes = durationMinutes;
+        this.durationInMinutes = durationMinutes;
         this.posterUrl = posterUrl;
     }
 
