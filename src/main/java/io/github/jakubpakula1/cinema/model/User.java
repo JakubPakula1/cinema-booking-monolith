@@ -1,13 +1,11 @@
 package io.github.jakubpakula1.cinema.model;
 
 import jakarta.persistence.*;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.Data;
 
 import java.util.List;
 
-@Setter
-@Getter
+@Data
 @Entity
 @Table(name = "users")
 public class User {

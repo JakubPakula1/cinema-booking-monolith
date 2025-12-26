@@ -31,7 +31,7 @@ public class ScreeningViewController {
         return "screening/list";
     }
 
-    @GetMapping("/add")
+    @GetMapping("/admin/add")
     public String showScreeningForm(Model model) {
         model.addAttribute("screening", new ScreeningDTO());
         model.addAttribute("movies", movieService.getAllMovies());
@@ -39,7 +39,7 @@ public class ScreeningViewController {
         return "screening/screening-form";
     }
 
-    @PostMapping("/add")
+    @PostMapping("/admin/add")
     public String addScreening(@ModelAttribute ScreeningDTO screeningDTO, Model model) {
         try{
             screeningService.createScreening(screeningDTO);
