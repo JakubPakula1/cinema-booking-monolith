@@ -1,36 +1,38 @@
 package io.github.jakubpakula1.cinema.service;
 
-import io.github.jakubpakula1.cinema.dto.CollisionDTO;
-import io.github.jakubpakula1.cinema.dto.ScreeningDTO;
-import io.github.jakubpakula1.cinema.dto.ScreeningListDTO;
+import io.github.jakubpakula1.cinema.dto.*;
 import io.github.jakubpakula1.cinema.exception.ResourceNotFoundException;
 import io.github.jakubpakula1.cinema.exception.ScreeningOverlapException;
-import io.github.jakubpakula1.cinema.model.Movie;
-import io.github.jakubpakula1.cinema.model.Room;
-import io.github.jakubpakula1.cinema.model.Screening;
-import io.github.jakubpakula1.cinema.repository.MovieRepository;
-import io.github.jakubpakula1.cinema.repository.RoomRepository;
-import io.github.jakubpakula1.cinema.repository.ScreeningRepository;
+import io.github.jakubpakula1.cinema.model.*;
+import io.github.jakubpakula1.cinema.repository.*;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 @Service
 public class ScreeningService {
     private final ScreeningRepository screeningRepository;
     private final MovieRepository movieRepository;
     private final RoomRepository roomRepository;
+    private final TicketRepository ticketRepository;
+    private final TemporaryReservationRepository temporaryReservationRepository;
 
     private final long cleaningDurationInMinutes;
+    private final SeatRepository seatRepository;
 
-    public  ScreeningService(ScreeningRepository screeningRepository, MovieRepository movieRepository, RoomRepository roomRepository, @Value("${cinema.cleaning-duration-minutes}") long cleaningDurationInMinutes) {
+    public  ScreeningService(ScreeningRepository screeningRepository, MovieRepository movieRepository, RoomRepository roomRepository, TicketRepository ticketRepository, TemporaryReservationRepository temporaryReservationRepository, @Value("${cinema.cleaning-duration-minutes}") long cleaningDurationInMinutes, SeatRepository seatRepository) {
         this.screeningRepository = screeningRepository;
         this.movieRepository = movieRepository;
         this.roomRepository = roomRepository;
         this.cleaningDurationInMinutes = cleaningDurationInMinutes;
+        this.seatRepository = seatRepository;
+        this.ticketRepository = ticketRepository;
+        this.temporaryReservationRepository = temporaryReservationRepository;
     }
 
     @Transactional(readOnly = true)
@@ -113,4 +115,46 @@ public class ScreeningService {
 
         return getCollidingScreenings(roomId, start, end);
     }
- }
+
+    @Transactional
+    public List<SeatStatusDTO> getSeatsWithStatus(Long screeningId) {
+        Screening screening = screeningRepository.findById(screeningId)
+                .orElseThrow(() -> new ResourceNotFoundException("Screening not found with id: " + screeningId));
+
+        Room room = screening.getRoom();
+        List<Seat> allSeats = seatRepository.findAllByRoomId(room.getId());
+
+        List<Long> soldSeatIds = ticketRepository.findSoldSeatIdsByScreeningId(screeningId);
+
+        List<SeatUserLockDTO> lockedSeats = temporaryReservationRepository.findLockedSeatIdsByScreeningId(screeningId);
+        List<Long> lockedSeatIds = lockedSeats.stream()
+                .map(SeatUserLockDTO::getSeatId)
+                .toList();
+
+        Set<Long> takenSeatIds = new HashSet<>();
+        takenSeatIds.addAll(soldSeatIds);
+        takenSeatIds.addAll(lockedSeatIds);
+
+        return allSeats.stream()
+                .map(seat -> {
+                    boolean isTaken = takenSeatIds.contains(seat.getId());
+                    Long userId = null;
+                    if (isTaken) {
+                        userId = lockedSeats.stream()
+                                .filter(lock -> lock.getSeatId().equals(seat.getId()))
+                                .map(SeatUserLockDTO::getUserId)
+                                .findFirst()
+                                .orElse(null);
+                    }
+                    return SeatStatusDTO.builder()
+                            .seatId(seat.getId())
+                            .rowNumber(seat.getRowNumber())
+                            .seatNumber(seat.getSeatNumber())
+                            .userId(userId)
+                            .isAvailable(!isTaken)
+                            .build();
+                })
+                .toList();
+
+    }
+}

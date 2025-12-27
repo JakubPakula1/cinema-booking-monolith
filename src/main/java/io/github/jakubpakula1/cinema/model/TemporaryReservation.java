@@ -1,13 +1,13 @@
 package io.github.jakubpakula1.cinema.model;
 
 import jakarta.persistence.*;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
 
-@Setter
-@Getter
+@Data
+@NoArgsConstructor
 @Entity
 @Table(name = "temporary_reservations")
 public class TemporaryReservation {
@@ -15,18 +15,19 @@ public class TemporaryReservation {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(nullable = false)
-    private Long seatId;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "seat_id", nullable = false)
+    private Seat seat;
 
-    @Column(nullable = false)
-    private Long screeningId;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "screening_id", nullable = false)
+    private Screening screening;
 
-    private String sessionId;
+    // ZAMIAST SESSION ID:
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id", nullable = false)
+    private User user;
 
     @Column(nullable = false)
     private LocalDateTime expiresAt;
-
-    public TemporaryReservation() {
-    }
-
 }

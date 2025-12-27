@@ -13,6 +13,10 @@ public class UserService {
     private final PasswordEncoder passwordEncoder;
     private final UserRepository userRepository;
 
+    public User getUserByEmail(String email) {
+        return userRepository.findByEmail(email).orElse(null);
+    }
+
     public void registerUser(UserDTO userDTO) {
         User user = new User();
         user.setEmail(userDTO.getEmail());

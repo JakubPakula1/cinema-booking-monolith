@@ -24,8 +24,8 @@ public class Ticket {
     private BigDecimal price;
 
     @ManyToOne
-    @JoinColumn(name = "reservation_id", nullable = false)
-    private Reservation reservation;
+    @JoinColumn(name = "order_id", nullable = false)
+    private Order order;
 
     @ManyToOne
     @JoinColumn(name = "screening_id", nullable = false)

@@ -13,8 +13,8 @@ import java.util.List;
 @Setter
 @Getter
 @Entity
-@Table(name = "reservations")
-public class Reservation {
+@Table(name = "orders")
+public class Order {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -30,10 +30,10 @@ public class Reservation {
     @JoinColumn(name = "user_id")
     private User user;
 
-    @OneToMany(mappedBy = "reservation", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "order", cascade = CascadeType.ALL)
     private List<Ticket> tickets = new ArrayList<>();
 
-    public Reservation() {
+    public Order() {
     }
 
 }
