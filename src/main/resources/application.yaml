@@ -1,4 +1,13 @@
 spring:
+  web:
+    resources:
+      cache:
+        period: 0
+  devtools:
+    restart:
+      enabled: true
+  thymeleaf:
+    cache: false
   application:
     name: cinema-booking-monolith
   datasource:

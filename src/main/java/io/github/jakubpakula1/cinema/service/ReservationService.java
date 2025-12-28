@@ -20,6 +20,8 @@ public class ReservationService {
     private final ScreeningRepository screeningRepository;
     private final TemporaryReservationRepository temporaryReservationRepository;
 
+    //TODO add methods for confirming reservations and cleaning up expired temporary reservations
+    //TODO handle situation when one user adds another seat while having temporary reservations for others (timeout should apply to all seats in such case)
     @Transactional
     public void createTemporaryReservation(ReservationRequestDTO request, User user) {
         Seat seat = seatRepository.findSeatWithLock(request.getSeatId())

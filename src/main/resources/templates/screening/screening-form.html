@@ -16,7 +16,7 @@
                 <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
             </div>
 
-            <form th:action="@{/screenings/add}" th:object="${screening}" method="post">
+            <form th:action="@{/screenings/admin/add}" th:object="${screening}" method="post">
                 <div class="mb-3">
                     <label for="movie" class="form-label">Movie</label>
                     <select class="form-select" id="movie" th:field="*{movieId}" required>
