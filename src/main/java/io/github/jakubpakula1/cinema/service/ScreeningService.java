@@ -2,6 +2,7 @@ package io.github.jakubpakula1.cinema.service;
 
 import io.github.jakubpakula1.cinema.dto.*;
 import io.github.jakubpakula1.cinema.exception.ResourceNotFoundException;
+import io.github.jakubpakula1.cinema.exception.ScreeningDateInPastException;
 import io.github.jakubpakula1.cinema.exception.ScreeningOverlapException;
 import io.github.jakubpakula1.cinema.model.*;
 import io.github.jakubpakula1.cinema.repository.*;
@@ -58,7 +59,7 @@ public class ScreeningService {
     public void createScreening(ScreeningDTO screeningDTO) {
 
         if (screeningDTO.getScreeningTime().isBefore(LocalDateTime.now())) {
-            throw new IllegalArgumentException("Screening time cannot be in the past.");
+            throw new ScreeningDateInPastException();
         }
 
         Room room = roomRepository.findById(screeningDTO.getRoomId()).orElseThrow(() -> new ResourceNotFoundException("Room Not Found"));

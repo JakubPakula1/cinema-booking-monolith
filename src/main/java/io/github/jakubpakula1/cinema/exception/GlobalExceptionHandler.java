@@ -1,5 +1,9 @@
 package io.github.jakubpakula1.cinema.exception;
 
+import io.github.jakubpakula1.cinema.dto.ScreeningDTO;
+import io.github.jakubpakula1.cinema.service.MovieService;
+import io.github.jakubpakula1.cinema.service.RoomService;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ControllerAdvice;
@@ -7,7 +11,10 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 
 @ControllerAdvice
+@RequiredArgsConstructor
 public class GlobalExceptionHandler {
+    private final MovieService movieService;
+    private final RoomService roomService;
 
     @ExceptionHandler(ResourceNotFoundException.class)
     @ResponseStatus(HttpStatus.NOT_FOUND)
@@ -28,7 +35,24 @@ public class GlobalExceptionHandler {
         model.addAttribute("errorMessage", e.getMessage());
         model.addAttribute("errorCode", "409");
 
-        return "error/error-page";
+        // Add dropdowns for form
+        model.addAttribute("movies", movieService.getAllMovies());
+        model.addAttribute("rooms", roomService.getAllRooms());
+        model.addAttribute("screening", new ScreeningDTO());
+        return "screening/admin/screening-form";
+    }
+
+    @ExceptionHandler(ScreeningDateInPastException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public String handleScreeningDateInPastException(ScreeningDateInPastException e, Model model) {
+        model.addAttribute("errorMessage", e.getMessage());
+        model.addAttribute("errorCode", "400");
+
+        // Add dropdowns for form
+        model.addAttribute("movies", movieService.getAllMovies());
+        model.addAttribute("rooms", roomService.getAllRooms());
+        model.addAttribute("screening", new ScreeningDTO());
+        return "screening/admin/screening-form";
     }
 
 

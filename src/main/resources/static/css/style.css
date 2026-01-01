@@ -469,25 +469,22 @@ footer a:hover {
 
 .movie-card {
     background-color: var(--bg-surface);
-    border: 1px solid rgba(255, 255, 255, 0.1); /* Delikatna ramka */
+    border: 1px solid rgba(255, 255, 255, 0.1);
     border-radius: 12px;
     overflow: hidden;
     transition: all 0.3s ease;
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
 }
 
-/* Efekt Hover na całą kartę */
 .movie-card:hover {
-    transform: translateY(-10px); /* Uniesienie */
-    border-color: var(--accent-primary); /* Czerwona ramka */
-    box-shadow: 0 10px 30px rgba(239, 35, 60, 0.25); /* Czerwona poświata */
+    transform: translateY(-10px);
+    border-color: var(--accent-primary);
+    box-shadow: 0 10px 30px rgba(239, 35, 60, 0.25);
 }
 
-/* Wrapper na zdjęcie (dla overlayu i efektów) */
 .movie-card-img-wrapper {
     position: relative;
     overflow: hidden;
-    /* Proporcje plakatu kinowego to zazwyczaj 2:3 */
     aspect-ratio: 2/3;
 }
 
@@ -498,12 +495,10 @@ footer a:hover {
     transition: transform 0.5s ease;
 }
 
-/* Zoom zdjęcia po najechaniu na kartę */
 .movie-card:hover .card-img-top {
     transform: scale(1.05);
 }
 
-/* Badge gatunku w lewym górnym rogu */
 .movie-badge-overlay {
     position: absolute;
     top: 10px;
@@ -518,7 +513,6 @@ footer a:hover {
     box-shadow: 0 2px 5px rgba(0,0,0,0.5);
 }
 
-/* Stylizacja treści */
 .movie-card .card-body {
     padding: 20px;
     background: linear-gradient(to bottom, var(--bg-surface), rgba(0,0,0,0.2));
@@ -531,7 +525,6 @@ footer a:hover {
     font-size: 1.1rem;
 }
 
-/* Metadane (ikonka + tekst) */
 .movie-card-meta {
     display: flex;
     justify-content: space-between;
@@ -549,10 +542,9 @@ footer a:hover {
 }
 
 .movie-card-meta i {
-    color: var(--accent-primary); /* Czerwone ikonki */
+    color: var(--accent-primary);
 }
 
-/* Przycisk na karcie */
 .movie-card .btn-outline-light {
     border-color: rgba(255,255,255,0.2);
     color: var(--text-secondary);
@@ -564,4 +556,65 @@ footer a:hover {
     background-color: var(--accent-primary);
     border-color: var(--accent-primary);
     color: white;
+}
+/* =========================================
+   9. ADMIN FORMS
+   ========================================= */
+
+.admin-form-card {
+    background: rgba(43, 45, 66, 0.6);
+    backdrop-filter: blur(10px);
+    padding: 40px;
+    border-radius: 16px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+}
+
+/* Label Styling */
+.form-label {
+    color: var(--lavender-grey);
+    font-weight: 600;
+    font-size: 0.9rem;
+    margin-bottom: 8px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+/* Input & Select Styling */
+.form-control,
+.form-select,
+.input-group-text {
+    background-color: rgba(26, 27, 38, 0.8) !important;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    color: var(--platinum) !important;
+    padding: 12px 15px;
+}
+
+.input-group-text {
+    border-right: none;
+    color: var(--accent-primary) !important; /* Red Icon */
+}
+
+.form-control:focus,
+.form-select:focus {
+    background-color: rgba(26, 27, 38, 1) !important;
+    border-color: var(--accent-primary);
+    box-shadow: 0 0 0 0.25rem rgba(239, 35, 60, 0.25);
+    color: #fff !important;
+}
+
+input[type="datetime-local"] {
+    color-scheme: dark;
+}
+
+/* Form Helper Text */
+.form-text {
+    color: rgba(141, 153, 174, 0.6) !important;
+    font-size: 0.8rem;
+    margin-top: 8px;
+}
+
+/* Conflict List Styling */
+#conflictsSection .list-group-item {
+    border-color: rgba(255,255,255,0.1);
 }

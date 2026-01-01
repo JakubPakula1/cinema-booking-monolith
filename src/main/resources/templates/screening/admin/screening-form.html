@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout}"
+      lang="en">
+<head>
+    <title>Add Screening - Admin</title>
+</head>
+<body>
+
+<div layout:fragment="content">
+    <div class="container cinema-section d-flex justify-content-center align-items-center" style="min-height: 80vh;">
+
+        <div class="col-12 col-md-8 col-lg-6">
+
+            <div class="text-center mb-4">
+                <h1 class="mb-2">Schedule Screening</h1>
+                <p class="text-secondary">Create a new showtime for a movie</p>
+            </div>
+
+            <div th:if="${errorMessage}" class="alert alert-danger alert-dismissible fade show shadow-sm" role="alert">
+                <i class="bi bi-exclamation-triangle-fill me-2"></i>
+                <strong th:text="${errorMessage}">Error</strong>
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            </div>
+
+            <div class="admin-form-card">
+                <form th:action="@{/admin/screenings/add}" th:object="${screening}" method="post">
+
+                    <div class="mb-4">
+                        <label for="movie" class="form-label">Select Movie</label>
+                        <div class="input-group">
+                            <span class="input-group-text"><i class="bi bi-film"></i></span>
+                            <select class="form-select" id="movie" th:field="*{movieId}" required>
+                                <option value="" selected>Choose a movie...</option>
+                                <option th:each="movie : ${movies}"
+                                        th:value="${movie.id}"
+                                        th:text="${movie.title} + ' (' + ${movie.durationInMinutes} + ' min)'">
+                                </option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="mb-4">
+                        <label for="room" class="form-label">Select Room</label>
+                        <div class="input-group">
+                            <span class="input-group-text"><i class="bi bi-door-open-fill"></i></span>
+                            <select class="form-select" id="room" th:field="*{roomId}" required>
+                                <option value="" selected>Choose a room...</option>
+                                <option th:each="room : ${rooms}"
+                                        th:value="${room.id}"
+                                        th:text="${room.name}">
+                                </option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="mb-4">
+                        <label for="screeningTime" class="form-label">Screening Date & Time</label>
+                        <div class="input-group">
+                            <span class="input-group-text"><i class="bi bi-calendar-event"></i></span>
+                            <input type="datetime-local" class="form-control" id="screeningTime" th:field="*{screeningTime}" required>
+                        </div>
+                        <div class="form-text text-secondary">The end time will be calculated automatically based on duration.</div>
+                    </div>
+
+                    <div class="d-grid gap-3 mt-5">
+                        <button type="submit" class="btn btn-gold btn-lg">
+                            <i class="bi bi-plus-circle me-2"></i> Add Screening
+                        </button>
+
+                        <button type="button" class="btn btn-outline-danger" id="checkConflictsBtn">
+                            <i class="bi bi-shield-check me-2"></i> Check for Conflicts
+                        </button>
+
+                        <a th:href="@{/screenings}" class="btn btn-link text-secondary text-decoration-none">Cancel</a>
+                    </div>
+
+                    <div id="conflictsSection" class="mt-4 p-3 rounded border border-warning bg-opacity-10 bg-warning" style="display:none;">
+                        <h6 class="text-warning"><i class="bi bi-exclamation-circle me-2"></i>Conflict Warning</h6>
+                        <ul id="conflictsUl" class="list-group list-group-flush mt-2">
+                        </ul>
+                    </div>
+
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<th:block layout:fragment="scripts">
+    <script>
+        document.getElementById('checkConflictsBtn').addEventListener('click', function() {
+            const btn = this;
+            const originalText = btn.innerHTML;
+
+            // Basic validation
+            const roomId = document.getElementById('room').value;
+            const movieId = document.getElementById('movie').value;
+            const screeningTime = document.getElementById('screeningTime').value;
+
+            if (!roomId || !movieId || !screeningTime) {
+                alert("Please fill in all fields first.");
+                return;
+            }
+
+            // Loading state
+            btn.innerHTML = '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Checking...';
+
+            const startTime = new Date(screeningTime).toISOString();
+
+            fetch(`/api/v1/screenings/collisions?movieId=${movieId}&roomId=${roomId}&startTime=${startTime}`)
+                .then(response => response.json())
+                .then(data => {
+                    const section = document.getElementById('conflictsSection');
+                    const list = document.getElementById('conflictsUl');
+                    list.innerHTML = '';
+
+                    section.style.display = 'block';
+
+                    if (data.length === 0) {
+                        section.className = "mt-4 p-3 rounded border border-success bg-opacity-10 bg-success";
+                        section.querySelector('h6').className = "text-success";
+                        section.querySelector('h6').innerHTML = '<i class="bi bi-check-circle me-2"></i>No Conflicts Found';
+                    } else {
+                        section.className = "mt-4 p-3 rounded border border-danger bg-opacity-10 bg-danger";
+                        section.querySelector('h6').className = "text-danger";
+                        section.querySelector('h6').innerHTML = '<i class="bi bi-exclamation-triangle me-2"></i>Conflicts Detected!';
+
+                        data.forEach(screening => {
+                            const item = document.createElement('li');
+                            item.className = 'list-group-item bg-transparent text-white border-secondary';
+
+                            const start = new Date(screening.screeningTime).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
+                            const end = new Date(screening.endTime).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
+
+                            item.innerHTML = `
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <strong>${screening.movieTitle}</strong>
+                                    <span class="badge bg-danger">${start} - ${end}</span>
+                                </div>
+                                <small class="text-secondary">Room: ${screening.roomName}</small>
+                            `;
+                            list.appendChild(item);
+                        });
+                    }
+                    btn.innerHTML = originalText;
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    btn.innerHTML = originalText;
+                });
+        });
+    </script>
+</th:block>
+
+</body>
+</html>
