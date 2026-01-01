@@ -1,8 +1,14 @@
 spring:
+  servlet:
+    multipart:
+      max-file-size: 10MB
+      max-request-size: 50MB
   web:
     resources:
       cache:
         period: 0
+      static-locations:
+        - classpath:/static/
   devtools:
     restart:
       enabled: true
@@ -22,4 +28,15 @@ spring:
       hibernate:
         dialect: org.hibernate.dialect.PostgreSQLDialect
 cinema:
+  upload-dir: ${user.dir}/uploads
   cleaning-duration-minutes: 25
+
+server:
+  tomcat:
+    max-http-form-post-size: 52428800
+    max-part-count: 50
+    max-part-header-size: 2048
+logging:
+  level:
+    org.springframework.web: DEBUG
+    org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerMapping: TRACE

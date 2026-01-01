@@ -1,10 +1,15 @@
+/* =========================================
+   1. VARIABLES & GLOBAL RESET
+   ========================================= */
 :root {
+    /* Color Palette */
     --space-indigo: #2b2d42ff;
     --lavender-grey: #8d99aeff;
     --platinum: #edf2f4ff;
     --punch-red: #ef233cff;
     --flag-red: #d90429ff;
 
+    /* Functional Colors */
     --bg-primary: #1a1b26ff;
     --bg-surface: #2b2d42ff;
     --accent-primary: #ef233cff;
@@ -13,10 +18,10 @@
     --text-secondary: #8d99aeff;
 }
 
-/* Reset Default Bootstrap Margins */
 * {
     margin: 0;
     padding: 0;
+    box-sizing: border-box;
 }
 
 html, body {
@@ -24,10 +29,10 @@ html, body {
     height: 100%;
     margin: 0;
     padding: 0;
+    overflow-x: hidden;
 }
 
 body {
-    background-color: var(--bg-primary);
     color: var(--text-primary);
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     display: flex;
@@ -36,17 +41,19 @@ body {
 
 main {
     flex: 1;
-    padding: 0;
-    margin: 0;
 }
 
-main .container {
-    padding: 0;
-    margin: 0;
-    max-width: 100%;
+/* Helper Class for Centering Content (Used in Gallery & Buttons) */
+.centered-content {
+    max-width: 1200px;
+    margin-left: auto;
+    margin-right: auto;
+    padding: 0 20px;
 }
 
-/* Navbar Styling */
+/* =========================================
+   2. NAVBAR & FOOTER
+   ========================================= */
 .navbar {
     background-color: var(--bg-surface) !important;
     border-bottom: 3px solid var(--accent-primary);
@@ -103,18 +110,13 @@ main .container {
     filter: brightness(0) invert(1);
 }
 
-/* Footer Styling */
+/* Footer */
 footer {
     background-color: var(--bg-surface) !important;
     border-top: 3px solid var(--accent-primary);
     color: var(--text-secondary) !important;
     margin-top: auto;
     box-shadow: 0 -4px 20px rgba(239, 35, 60, 0.1);
-}
-
-footer small {
-    color: var(--text-secondary);
-    font-weight: 500;
 }
 
 footer a {
@@ -128,13 +130,15 @@ footer a:hover {
     text-decoration: underline;
 }
 
+/* =========================================
+   3. HOMEPAGE COMPONENTS (Carousel & Cards)
+   ========================================= */
 /* Hero Carousel */
 .hero-carousel {
     position: relative;
     height: 500px;
     overflow: hidden;
     border-bottom: 4px solid var(--accent-primary);
-    margin: 0;
     box-shadow: 0 10px 40px rgba(239, 35, 60, 0.2);
 }
 
@@ -142,30 +146,18 @@ footer a:hover {
     height: 500px;
     background-size: cover;
     background-position: center;
-    position: relative;
 }
 
 .carousel-item::before {
     content: '';
     position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
+    top: 0; left: 0; right: 0; bottom: 0;
     background: linear-gradient(135deg, rgba(26, 27, 38, 0.7) 0%, rgba(239, 35, 60, 0.15) 100%);
-    z-index: 1;
 }
 
 .carousel-caption {
-    position: absolute;
-    bottom: 0;
-    left: 0;
-    right: 0;
-    z-index: 2;
     background: linear-gradient(to top, rgba(26, 27, 38, 0.98), transparent);
     padding: 60px 20px 30px;
-    transform: translateY(0);
-    transition: transform 0.3s ease;
 }
 
 .carousel-caption h2 {
@@ -173,15 +165,6 @@ footer a:hover {
     font-weight: 800;
     color: var(--platinum);
     text-shadow: 0 4px 20px rgba(0, 0, 0, 0.8);
-    margin-bottom: 15px;
-    letter-spacing: 1px;
-}
-
-.carousel-caption p {
-    font-size: clamp(0.9rem, 2vw, 1.25rem);
-    color: var(--lavender-grey);
-    text-shadow: 0 2px 10px rgba(0, 0, 0, 0.8);
-    margin-bottom: 20px;
 }
 
 .cta-button {
@@ -190,50 +173,30 @@ footer a:hover {
     border: none;
     font-weight: 700;
     padding: 14px 40px;
-    font-size: 1.1rem;
-    transition: all 0.3s ease;
-    box-shadow: 0 0 25px rgba(239, 35, 60, 0.4);
     text-transform: uppercase;
     letter-spacing: 1px;
+    transition: all 0.3s ease;
+    box-shadow: 0 0 25px rgba(239, 35, 60, 0.4);
 }
 
 .cta-button:hover {
     background-color: var(--accent-secondary);
     transform: translateY(-4px);
     box-shadow: 0 12px 40px rgba(239, 35, 60, 0.6);
-    color: var(--platinum);
 }
 
-.cta-button:active {
-    transform: translateY(-2px);
-    box-shadow: 0 6px 20px rgba(239, 35, 60, 0.4);
-}
-
-.carousel-control-prev:hover,
-.carousel-control-next:hover {
-    opacity: 1;
-}
-
-.carousel-control-prev-icon,
-.carousel-control-next-icon {
-    filter: drop-shadow(0 0 8px rgba(239, 35, 60, 0.6));
-}
-
-/* Main Content Section */
+/* Cinema Section & Features */
 .cinema-section {
     padding: 80px 20px;
-    background-color: var(--bg-primary);
-    margin: 0;
 }
 
 .cinema-section h1 {
     font-size: clamp(2rem, 5vw, 3.5rem);
     font-weight: 900;
     margin-bottom: 50px;
+    color: var(--platinum);
     position: relative;
     display: inline-block;
-    color: var(--platinum);
-    letter-spacing: 1px;
 }
 
 .cinema-section h1::after {
@@ -244,148 +207,361 @@ footer a:hover {
     width: 120px;
     height: 5px;
     background: linear-gradient(to right, var(--accent-primary), var(--accent-secondary));
-    border-radius: 3px;
 }
 
-/* Feature Cards */
 .feature-card {
     background-color: var(--bg-surface);
     border: 2px solid rgba(239, 35, 60, 0.2);
     border-radius: 12px;
     transition: all 0.3s ease;
-    position: relative;
-    overflow: hidden;
     height: 100%;
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
-}
-
-.feature-card::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: -100%;
-    width: 100%;
-    height: 100%;
-    background: linear-gradient(90deg, transparent, rgba(239, 35, 60, 0.15), transparent);
-    transition: left 0.5s ease;
-    z-index: 0;
-}
-
-.feature-card:hover::before {
-    left: 100%;
+    padding: 30px 20px;
+    text-align: center;
 }
 
 .feature-card:hover {
     border-color: var(--accent-primary);
-    box-shadow: 0 0 40px rgba(239, 35, 60, 0.25), inset 0 0 30px rgba(239, 35, 60, 0.08);
     transform: translateY(-10px);
-}
-
-.feature-card .card-body {
-    position: relative;
-    z-index: 1;
-    text-align: center;
-    padding: 30px 20px;
-}
-
-.feature-card .card-title {
-    font-size: 2rem;
-    margin-bottom: 15px;
-    margin-top: 20px;
+    box-shadow: 0 0 40px rgba(239, 35, 60, 0.25);
 }
 
 .feature-card .card-text {
     color: var(--text-secondary);
-    font-size: 0.95rem;
-    margin-bottom: 25px;
-    line-height: 1.6;
 }
 
-.feature-card .btn {
-    position: relative;
-    z-index: 2;
-    margin-top: auto;
-    margin-bottom: 20px;
-}
-
-/* Custom Button Styles */
 .btn-gold {
     background-color: var(--accent-primary);
     color: var(--platinum);
     border: none;
     font-weight: 700;
-    transition: all 0.3s ease;
     text-transform: uppercase;
-    letter-spacing: 0.5px;
+    transition: all 0.3s ease;
 }
 
 .btn-gold:hover {
     background-color: var(--accent-secondary);
     transform: translateY(-3px);
-    box-shadow: 0 8px 25px rgba(239, 35, 60, 0.4);
+}
+
+/* =========================================
+   4. MOVIE DETAILS PAGE
+   ========================================= */
+
+/* Backdrop Hero (Full Width) */
+.movie-backdrop-hero {
+    position: relative;
+    height: 500px;
+    width: 100%;
+    background-size: cover;
+    background-position: center;
+    /* Space at bottom for content overlap */
+    padding-bottom: 80px;
+    box-shadow: 0 8px 32px rgba(239, 35, 60, 0.3);
+}
+
+.movie-backdrop-hero::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background: linear-gradient(135deg, rgba(26, 27, 38, 0.8) 0%, rgba(239, 35, 60, 0.2) 100%);
+    z-index: 1;
+}
+
+/* Info Overlay on Backdrop */
+.movie-info-overlay {
+    position: absolute;
+    bottom: 0; left: 0; right: 0;
+    z-index: 2;
+    background: linear-gradient(to top, rgba(26, 27, 38, 0.95), transparent);
+    padding: 60px 40px 40px;
+}
+
+.movie-info-overlay h1 {
+    font-size: clamp(2rem, 5vw, 3.5rem);
+    margin-bottom: 15px;
+    color: #edf2f4;
+    font-weight: 900;
+    text-shadow: 0 4px 20px rgba(0, 0, 0, 0.8);
+}
+
+.movie-meta {
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap;
+}
+
+/* Main Content Container (Overlap Effect) */
+.movie-poster-section {
+    max-width: 1200px;
+    margin: 0 auto;       /* Center horizontally */
+    margin-top: -50px;   /* Pull up over the banner */
+    margin-bottom: 60px;
+    position: relative;
+    z-index: 10;          /* Ensure it sits ON TOP of banner */
+    display: flex;
+    gap: 40px;
+    padding: 0 20px;
+}
+
+/* Left Column: Poster */
+.movie-poster {
+    flex-shrink: 0;
+    width: 250px;
+}
+
+.movie-poster img {
+    width: 100%;
+    border-radius: 12px;
+    box-shadow: 0 8px 32px rgba(239, 35, 60, 0.4);
+    border: 2px solid rgba(255, 255, 255, 0.1);
+}
+
+/* Right Column: Details */
+.movie-details-content {
+    flex: 1;
+}
+
+.movie-description .lead {
+    color: #8d99ae;
+    line-height: 1.8;
+    font-size: 1.1rem;
+    font-weight: 300;
+    max-width: 800px;
+}
+
+/* Metadata Grid (Director, Country, Cast) */
+.movie-meta-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 20px;
+    background: rgba(43, 45, 66, 0.6);
+    backdrop-filter: blur(10px);
+    padding: 25px;
+    border-radius: 12px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-left: 5px solid #ef233c;
+    margin-bottom: 30px;
+}
+
+.meta-item {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+.meta-icon {
+    width: 50px;
+    height: 50px;
+    background-color: rgba(239, 35, 60, 0.15);
+    color: #ef233c;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.5rem;
+    flex-shrink: 0;
+}
+
+.meta-content {
+    display: flex;
+    flex-direction: column;
+}
+
+.meta-label {
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: #8d99ae;
+    font-weight: 600;
+    margin-bottom: 2px;
+}
+
+.meta-value {
+    color: #edf2f4;
+    font-size: 1.1rem;
+    font-weight: 500;
+}
+
+.meta-value.text-highlight {
+    color: #fff;
+    line-height: 1.4;
+}
+
+/* Grid Span for Larger Screens */
+@media (min-width: 768px) {
+    .meta-item.full-width {
+        grid-column: span 2;
+    }
+}
+
+/* Responsive adjustments for Movie Details */
+@media (max-width: 768px) {
+    .movie-poster-section {
+        flex-direction: column;
+        margin-top: 20px; /* Remove overlap on mobile */
+        gap: 20px;
+    }
+    .movie-poster {
+        margin: 0 auto;
+        max-width: 200px;
+    }
+}
+
+/* =========================================
+   5. GALLERY SECTION
+   ========================================= */
+.section-header {
+    border-left: 5px solid var(--flag-red);
+    padding-left: 15px;
+    margin-bottom: 20px;
     color: var(--platinum);
 }
 
-.btn-gold:active {
-    transform: translateY(-1px);
+.gallery-item {
+    position: relative;
+    overflow: hidden;
+    border-radius: 10px;
+    cursor: pointer;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.3);
 }
 
-/* Responsive Typography */
-@media (max-width: 768px) {
-    .hero-carousel {
-        height: 350px;
-    }
-
-    .carousel-item {
-        height: 350px;
-    }
-
-    .cinema-section {
-        padding: 60px 15px;
-    }
-
-    .feature-card .card-title {
-        font-size: 1.5rem;
-    }
-
-    .navbar-nav .nav-link {
-        margin-left: 0;
-        margin-top: 0.5rem;
-    }
+.gallery-image {
+    width: 100%;
+    height: 200px;
+    object-fit: cover;
+    transition: transform 0.5s ease, filter 0.3s ease;
 }
 
-@media (max-width: 576px) {
-    .hero-carousel {
-        height: 250px;
-    }
+.gallery-item:hover .gallery-image {
+    transform: scale(1.1);
+    filter: brightness(0.6);
+}
 
-    .carousel-item {
-        height: 250px;
-    }
+.gallery-overlay {
+    position: absolute;
+    top: 50%; left: 50%;
+    transform: translate(-50%, -50%);
+    color: var(--platinum);
+    font-size: 2rem;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    pointer-events: none;
+}
 
-    .carousel-caption {
-        padding: 40px 15px 20px;
-    }
+.gallery-item:hover .gallery-overlay {
+    opacity: 1;
+}
 
-    .carousel-caption h2 {
-        font-size: clamp(1.2rem, 4vw, 2rem);
-    }
+/* =========================================
+   6. MISC UTILITIES
+   ========================================= */
+.btn-back-wrapper {
+    margin-top: 40px;
+    margin-bottom: 60px;
+}
+/* =========================================
+   7. MOVIE LIST CARDS
+   ========================================= */
 
-    .carousel-control-prev,
-    .carousel-control-next {
-        width: 40px;
-        height: 40px;
-    }
+.movie-card {
+    background-color: var(--bg-surface);
+    border: 1px solid rgba(255, 255, 255, 0.1); /* Delikatna ramka */
+    border-radius: 12px;
+    overflow: hidden;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+}
 
-    .cinema-section h1 {
-        font-size: clamp(1.5rem, 4vw, 2.5rem);
-    }
+/* Efekt Hover na całą kartę */
+.movie-card:hover {
+    transform: translateY(-10px); /* Uniesienie */
+    border-color: var(--accent-primary); /* Czerwona ramka */
+    box-shadow: 0 10px 30px rgba(239, 35, 60, 0.25); /* Czerwona poświata */
+}
 
-    .cinema-section h1::after {
-        width: 80px;
-        height: 4px;
-    }
+/* Wrapper na zdjęcie (dla overlayu i efektów) */
+.movie-card-img-wrapper {
+    position: relative;
+    overflow: hidden;
+    /* Proporcje plakatu kinowego to zazwyczaj 2:3 */
+    aspect-ratio: 2/3;
+}
+
+.movie-card .card-img-top {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.5s ease;
+}
+
+/* Zoom zdjęcia po najechaniu na kartę */
+.movie-card:hover .card-img-top {
+    transform: scale(1.05);
+}
+
+/* Badge gatunku w lewym górnym rogu */
+.movie-badge-overlay {
+    position: absolute;
+    top: 10px;
+    left: 10px;
+    z-index: 2;
+}
+
+.movie-badge-overlay .badge {
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.5);
+}
+
+/* Stylizacja treści */
+.movie-card .card-body {
+    padding: 20px;
+    background: linear-gradient(to bottom, var(--bg-surface), rgba(0,0,0,0.2));
+}
+
+.movie-card .card-title {
+    color: var(--platinum);
+    font-weight: 700;
+    margin-bottom: 10px;
+    font-size: 1.1rem;
+}
+
+/* Metadane (ikonka + tekst) */
+.movie-card-meta {
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.85rem;
+    color: var(--lavender-grey);
+    border-bottom: 1px solid rgba(255,255,255,0.1);
+    padding-bottom: 10px;
+    margin-bottom: 10px;
+}
+
+.movie-card-meta .meta-item {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+
+.movie-card-meta i {
+    color: var(--accent-primary); /* Czerwone ikonki */
+}
+
+/* Przycisk na karcie */
+.movie-card .btn-outline-light {
+    border-color: rgba(255,255,255,0.2);
+    color: var(--text-secondary);
+    font-size: 0.9rem;
+    transition: all 0.3s ease;
+}
+
+.movie-card:hover .btn-outline-light {
+    background-color: var(--accent-primary);
+    border-color: var(--accent-primary);
+    color: white;
 }

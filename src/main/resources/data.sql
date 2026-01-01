@@ -1,16 +1,16 @@
-INSERT INTO rooms (name) VALUES ('Sala IMAX');
-INSERT INTO rooms (name) VALUES ('Sala Kameralna');
-
-INSERT INTO seats (row_number, seat_number, room_id) VALUES (1, 1, 1);
-INSERT INTO seats (row_number, seat_number, room_id) VALUES (1, 2, 1);
-INSERT INTO seats (row_number, seat_number, room_id) VALUES (1, 3, 1);
-
-INSERT INTO seats (row_number, seat_number, room_id) VALUES (2, 1, 1);
-INSERT INTO seats (row_number, seat_number, room_id) VALUES (2, 2, 1);
-INSERT INTO seats (row_number, seat_number, room_id) VALUES (2, 3, 1);
-
-INSERT INTO movies (title, description, genre, duration_minutes, poster_url)
-VALUES ('Diuna: Część Druga', 'Paul Atreides łączy siły z Chani...', 'Sci-Fi', 166, 'https://link.do/obrazka.jpg');
-
-INSERT INTO movies (title, description, genre, duration_minutes, poster_url)
-VALUES ('Kung Fu Panda 4', 'Po wyrusza na kolejną przygodę.', 'Animacja', 94, 'https://link.do/panda.jpg');
+-- INSERT INTO rooms (name) VALUES ('Sala IMAX');
+-- INSERT INTO rooms (name) VALUES ('Sala Kameralna');
+--
+-- INSERT INTO seats (row_number, seat_number, room_id) VALUES (1, 1, 1);
+-- INSERT INTO seats (row_number, seat_number, room_id) VALUES (1, 2, 1);
+-- INSERT INTO seats (row_number, seat_number, room_id) VALUES (1, 3, 1);
+--
+-- INSERT INTO seats (row_number, seat_number, room_id) VALUES (2, 1, 1);
+-- INSERT INTO seats (row_number, seat_number, room_id) VALUES (2, 2, 1);
+-- INSERT INTO seats (row_number, seat_number, room_id) VALUES (2, 3, 1);
+--
+-- INSERT INTO movies (title, description, genre, duration_minutes, poster_url)
+-- VALUES ('Diuna: Część Druga', 'Paul Atreides łączy siły z Chani...', 'Sci-Fi', 166, 'https://link.do/obrazka.jpg');
+--
+-- INSERT INTO movies (title, description, genre, duration_minutes, poster_url)
+-- VALUES ('Kung Fu Panda 4', 'Po wyrusza na kolejną przygodę.', 'Animacja', 94, 'https://link.do/panda.jpg');

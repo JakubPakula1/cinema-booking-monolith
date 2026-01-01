@@ -1,13 +1,15 @@
 package io.github.jakubpakula1.cinema.controller.view;
 
 import io.github.jakubpakula1.cinema.model.Movie;
+import io.github.jakubpakula1.cinema.repository.projection.MovieListView;
 import io.github.jakubpakula1.cinema.service.MovieService;
+import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
-
-import java.util.List;
+import org.springframework.web.bind.annotation.RequestParam;
 
 @Controller
 @RequestMapping("/movies")
@@ -20,11 +22,19 @@ public class MovieViewController {
     }
 
     @GetMapping
-    public String showMovieList(Model model) {
-        List<Movie> movies = movieService.getAllMovies();
-
-        model.addAttribute("movies", movies);
+    public String showMovieList(Model model,
+                                @RequestParam(defaultValue = "0") int page,
+                                @RequestParam(defaultValue = "12") int size) {
+        Page<MovieListView> moviePage = movieService.getAllMoviesProjected(page, size);
+        model.addAttribute("moviePage", moviePage);
 
         return "movies/movie-list";
+    }
+
+    @GetMapping("/{movieId}")
+    public String showMovieDetails(@PathVariable Long movieId, Model model) {
+        Movie movie = movieService.getMovieById(movieId);
+        model.addAttribute("movie", movie);
+        return "movies/movie-details";
     }
 }

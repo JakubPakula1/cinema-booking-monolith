@@ -1,27 +1,89 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout}"
+      lang="pl">
 <head>
-    <meta charset="UTF-8">
-    <title>Lista Filmów</title>
+    <title>Movies - Cinema App</title>
 </head>
 <body>
-    <h1>Dostępne Filmy</h1>
 
-    <table>
-        <thead>
-            <tr>
-                <th>ID</th>
-                <th>Tytuł</th>
-                <th>Opis</th>
-            </tr>
-        </thead>
-        <tbody>
-            <tr th:each="movie : ${movies}">
-                <td th:text="${movie.id}"></td>
-                <td th:text="${movie.title}"></td>
-                <td th:text="${movie.description}"></td>
-            </tr>
-        </tbody>
-    </table>
+<div layout:fragment="content">
+    <div class="container cinema-section">
+
+        <h1 class="mb-5">Movies we play</h1>
+
+        <div th:if="${moviePage.totalElements > 0}">
+
+            <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-4 g-4">
+
+                <div th:each="movie : ${moviePage.content}" class="col">
+                    <div class="card movie-card h-100">
+                        <div class="movie-card-img-wrapper">
+                            <a th:href="@{/movies/{id}(id=${movie.id})}">
+                                <img th:if="${movie.posterFileName}"
+                                     th:src="@{/uploads/{filename}(filename=${movie.posterFileName})}"
+                                     class="card-img-top"
+                                     alt="Plakat">
+                                <img th:unless="${movie.posterFileName}"
+                                     src="https://via.placeholder.com/300x450?text=No+Poster"
+                                     class="card-img-top"
+                                     alt="Brak plakatu">
+                            </a>
+                            <div class="movie-badge-overlay">
+                                <span class="badge bg-danger" th:text="${movie.genre}"></span>
+                            </div>
+                        </div>
+
+                        <div class="card-body d-flex flex-column">
+                            <h5 class="card-title text-truncate" th:text="${movie.title}" th:title="${movie.title}"></h5>
+                            <div class="movie-card-meta mb-3">
+                                <span class="meta-item"><i class="bi bi-calendar-event"></i> <span th:text="${movie.releaseYear}"></span></span>
+                                <span class="meta-item"><i class="bi bi-clock"></i> <span th:text="${movie.durationInMinutes} + ' min'"></span></span>
+                            </div>
+                            <p class="card-text small text-secondary mb-4 flex-grow-1">
+                                Director: <strong class="text-white" th:text="${movie.director}"></strong>
+                            </p>
+                            <a th:href="@{/movies/{id}(id=${movie.id})}" class="btn btn-outline-light w-100 mt-auto stretched-link">Details</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <nav aria-label="Page navigation" class="mt-5" th:if="${moviePage.totalPages > 1}">
+                <ul class="pagination justify-content-center">
+
+                    <li class="page-item" th:classappend="${moviePage.first} ? 'disabled'">
+                        <a class="page-link" th:href="@{/movies(page=${moviePage.number - 1}, size=${moviePage.size})}">
+                            <i class="bi bi-chevron-left"></i>
+                        </a>
+                    </li>
+
+                    <li class="page-item"
+                        th:each="i : ${#numbers.sequence(0, moviePage.totalPages - 1)}"
+                        th:classappend="${moviePage.number == i} ? 'active'">
+
+                        <a class="page-link"
+                           th:href="@{/movies(page=${i}, size=${moviePage.size})}"
+                           th:text="${i + 1}">1</a>
+                    </li>
+
+                    <li class="page-item" th:classappend="${moviePage.last} ? 'disabled'">
+                        <a class="page-link" th:href="@{/movies(page=${moviePage.number + 1}, size=${moviePage.size})}">
+                            <i class="bi bi-chevron-right"></i>
+                        </a>
+                    </li>
+                </ul>
+            </nav>
+
+        </div>
+
+        <div th:if="${moviePage.totalElements == 0}" class="text-center mt-5 text-secondary">
+            <h3>No movies</h3>
+        </div>
+
+    </div>
+</div>
+
 </body>
 </html>

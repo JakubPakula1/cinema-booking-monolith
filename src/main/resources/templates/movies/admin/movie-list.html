@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout}"
+      lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Movie List</title>
+</head>
+<body>
+<div layout:fragment="content">
+    <div class="container mt-5">
+        <h1 class="mb-4">Movie List</h1>
+
+        <div class="table-responsive">
+            <table class="table table-striped table-hover">
+                <thead class="table-dark">
+                    <tr>
+                        <th>ID</th>
+                        <th>Title</th>
+                        <th>Genre</th>
+                        <th>Director</th>
+                        <th>Release Year</th>
+                        <th>Duration (min)</th>
+                        <th>Poster</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr th:each="movie : ${movies}">
+                        <td th:text="${movie.id}"></td>
+                        <td th:text="${movie.title}"></td>
+                        <td th:text="${movie.genre}"></td>
+                        <td th:text="${movie.director}"></td>
+                        <td th:text="${movie.releaseYear}"></td>
+                        <td th:text="${movie.durationInMinutes}"></td>
+                        <td>
+                            <img th:if="${movie.posterFileName}"
+                                 th:src="@{/uploads/{filename}(filename=${movie.posterFileName})}"
+                                 alt="Poster"
+                                 style="max-width: 50px; height: auto;">
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+</body>
+</html>

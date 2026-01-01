@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout}"
+      lang="en">
+<head>
+    <title>Add Movie - Cinema App</title>
+</head>
+<body>
+<main layout:fragment="content">
+    <div class="row justify-content-center mt-5">
+        <div class="col-md-8">
+            <h1 class="mb-4">Add New Movie</h1>
+
+            <form th:action="@{/admin/movies/add}" th:object="${movieFormDTO}" method="post" enctype="multipart/form-data" novalidate class="needs-validation">
+
+                <!-- Basic Details Section -->
+                <fieldset class="border p-3 mb-4">
+                    <legend class="w-auto px-2 fs-5">Basic Details</legend>
+
+                    <div class="mb-3">
+                        <label for="title" class="form-label">Title <span class="text-danger">*</span></label>
+                        <input type="text" class="form-control" id="title" th:field="*{title}" th:errorclass="is-invalid" required>
+                        <div class="invalid-feedback" th:if="${#fields.hasErrors('title')}" th:errors="*{title}"></div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="description" class="form-label">Description <span class="text-danger">*</span></label>
+                        <textarea class="form-control" id="description" th:field="*{description}" rows="4" th:errorclass="is-invalid" required></textarea>
+                        <div class="invalid-feedback" th:if="${#fields.hasErrors('description')}" th:errors="*{description}"></div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label for="genre" class="form-label">Genre <span class="text-danger">*</span></label>
+                            <select class="form-select" id="genre" th:field="*{genre}" th:errorclass="is-invalid" required>
+                                <option value="">Select genre</option>
+                                <option th:each="genre : ${T(io.github.jakubpakula1.cinema.enums.MovieGenre).values()}" th:value="${genre}" th:text="${genre.displayName}"></option>
+                            </select>
+                            <div class="invalid-feedback" th:if="${#fields.hasErrors('genre')}" th:errors="*{genre}"></div>
+                        </div>
+
+                        <div class="col-md-6 mb-3">
+                            <label for="durationInMinutes" class="form-label">Duration (minutes) <span class="text-danger">*</span></label>
+                            <input type="number" class="form-control" id="durationInMinutes" th:field="*{durationInMinutes}" th:errorclass="is-invalid" required>
+                            <div class="invalid-feedback" th:if="${#fields.hasErrors('durationInMinutes')}" th:errors="*{durationInMinutes}"></div>
+                        </div>
+                    </div>
+                </fieldset>
+
+                <!-- Meta Information Section -->
+                <fieldset class="border p-3 mb-4">
+                    <legend class="w-auto px-2 fs-5">Meta Information</legend>
+
+                    <div class="mb-3">
+                        <label for="director" class="form-label">Director <span class="text-danger">*</span></label>
+                        <input type="text" class="form-control" id="director" th:field="*{director}" th:errorclass="is-invalid" required>
+                        <div class="invalid-feedback" th:if="${#fields.hasErrors('director')}" th:errors="*{director}"></div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="cast" class="form-label">Cast <span class="text-danger">*</span></label>
+                        <input type="text" class="form-control" id="cast" th:field="*{cast}" placeholder="Comma-separated list of actors" th:errorclass="is-invalid" required>
+                        <div class="invalid-feedback" th:if="${#fields.hasErrors('cast')}" th:errors="*{cast}"></div>
+                        <small class="form-text text-muted">Enter actors separated by commas</small>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label for="releaseYear" class="form-label">Release Year <span class="text-danger">*</span></label>
+                            <input type="number" class="form-control" id="releaseYear" th:field="*{releaseYear}" th:errorclass="is-invalid" required>
+                            <div class="invalid-feedback" th:if="${#fields.hasErrors('releaseYear')}" th:errors="*{releaseYear}"></div>
+                        </div>
+
+                        <div class="col-md-6 mb-3">
+                            <label for="productionCountry" class="form-label">Production Country <span class="text-danger">*</span></label>
+                            <input type="text" class="form-control" id="productionCountry" th:field="*{productionCountry}" th:errorclass="is-invalid" required>
+                            <div class="invalid-feedback" th:if="${#fields.hasErrors('productionCountry')}" th:errors="*{productionCountry}"></div>
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="ageRestriction" class="form-label">Age Restriction <span class="text-danger">*</span></label>
+                        <input type="number" class="form-control" id="ageRestriction" th:field="*{ageRestriction}" th:errorclass="is-invalid" required>
+                        <div class="invalid-feedback" th:if="${#fields.hasErrors('ageRestriction')}" th:errors="*{ageRestriction}"></div>
+                    </div>
+                </fieldset>
+
+                <!-- Media Section -->
+                <fieldset class="border p-3 mb-4">
+                    <legend class="w-auto px-2 fs-5">Media</legend>
+
+                    <div class="mb-3">
+                        <label for="posterImageFile" class="form-label">Poster Image <span class="text-danger">*</span></label>
+                        <input type="file" class="form-control" id="posterImageFile" th:field="*{posterImageFile}" accept="image/*" th:errorclass="is-invalid" required>
+                        <div class="invalid-feedback" th:if="${#fields.hasErrors('posterImageFile')}" th:errors="*{posterImageFile}"></div>
+                        <small class="form-text text-muted">Upload poster image for the movie</small>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="backdropImageFile" class="form-label">Backdrop Image <span class="text-danger">*</span></label>
+                        <input type="file" class="form-control" id="backdropImageFile" th:field="*{backdropImageFile}" accept="image/*" th:errorclass="is-invalid" required>
+                        <div class="invalid-feedback" th:if="${#fields.hasErrors('backdropImageFile')}" th:errors="*{backdropImageFile}"></div>
+                        <small class="form-text text-muted">Upload backdrop/banner image for the movie</small>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="galleryImages" class="form-label">Gallery Images</label>
+                        <input type="file" class="form-control" id="galleryImages" th:field="*{galleryImages}" accept="image/*" multiple>
+                        <small class="form-text text-muted">Upload multiple gallery images (optional)</small>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="trailerYoutubeUrl" class="form-label">Trailer YouTube URL</label>
+                        <input type="url" class="form-control" id="trailerYoutubeUrl" th:field="*{trailerYoutubeUrl}" placeholder="https://www.youtube.com/watch?v=...">
+                        <small class="form-text text-muted">Provide YouTube trailer URL (optional)</small>
+                    </div>
+                </fieldset>
+
+                <!-- Form Actions -->
+                <div class="d-flex gap-2 justify-content-end">
+                    <a href="/admin/" class="btn btn-secondary">Cancel</a>
+                    <button type="submit" class="btn btn-primary">Add Movie</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+</main>
+</body>
+</html>
