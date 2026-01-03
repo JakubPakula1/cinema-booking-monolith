@@ -4,6 +4,7 @@ import io.github.jakubpakula1.cinema.dto.MovieFormDTO;
 import io.github.jakubpakula1.cinema.exception.ResourceNotFoundException;
 import io.github.jakubpakula1.cinema.model.Movie;
 import io.github.jakubpakula1.cinema.repository.MovieRepository;
+import io.github.jakubpakula1.cinema.repository.projection.MovieCarouselDTO;
 import io.github.jakubpakula1.cinema.repository.projection.MovieListView;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
@@ -43,6 +44,10 @@ public class MovieService {
         return movieRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Movie not found"));
     }
 
+    public List<MovieCarouselDTO> getLatestMovies(int count) {
+        return movieRepository.findLatestMoviesForCarousel(PageRequest.of(0, count));
+
+    }
     public Movie addMovie(MovieFormDTO movieDTO) throws IOException{
         String savedPosterFileName = saveImage(movieDTO.getPosterImageFile());
         String savedBackdropFileName = saveImage(movieDTO.getBackdropImageFile());
