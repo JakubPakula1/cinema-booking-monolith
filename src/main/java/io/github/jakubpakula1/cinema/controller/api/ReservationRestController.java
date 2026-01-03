@@ -1,6 +1,8 @@
 package io.github.jakubpakula1.cinema.controller.api;
 
 import io.github.jakubpakula1.cinema.dto.ReservationRequestDTO;
+import io.github.jakubpakula1.cinema.dto.ReservationResponseDTO;
+import io.github.jakubpakula1.cinema.model.TemporaryReservation;
 import io.github.jakubpakula1.cinema.model.User;
 import io.github.jakubpakula1.cinema.service.ReservationService;
 import io.github.jakubpakula1.cinema.service.UserService;
@@ -19,18 +21,22 @@ public class ReservationRestController {
     private final ReservationService reservationService;
 
     @PostMapping("/lock")
-    public ResponseEntity<?> createReservation(@RequestBody ReservationRequestDTO request, @AuthenticationPrincipal UserDetails userDetails) {
+    public ResponseEntity<ReservationResponseDTO> createReservation(@RequestBody ReservationRequestDTO request, @AuthenticationPrincipal UserDetails userDetails) {
         if (userDetails == null) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }
-        // userDetails ma w sobie email/login, ale nie ma ID z bazy.
-        // Musimy pobrać pełną encję User z bazy na podstawie emaila.
         User user = userService.getUserByEmail(userDetails.getUsername());
 
-        // Przekazujemy Usera do serwisu
-        reservationService.createTemporaryReservation(request, user);
+        TemporaryReservation tempRes = reservationService.createTemporaryReservation(request, user);
 
-        return ResponseEntity.ok().build();
+        ReservationResponseDTO response = ReservationResponseDTO.builder()
+                .id(tempRes.getId())
+                .seatId(tempRes.getSeat().getId())
+                .screeningId(tempRes.getScreening().getId())
+                .expiresAt(tempRes.getExpiresAt())
+                .build();
+
+        return ResponseEntity.ok(response);
     }
 
     @DeleteMapping("/lock")

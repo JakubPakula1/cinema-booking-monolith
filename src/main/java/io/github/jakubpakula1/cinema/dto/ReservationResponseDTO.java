@@ -4,18 +4,16 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.springframework.format.annotation.DateTimeFormat;
 
 import java.time.LocalDateTime;
 
 @Data
+@Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@Builder
-public class ScreeningDTO {
+public class ReservationResponseDTO {
     private Long id;
-    private Long movieId;
-    private Long roomId;
-    @DateTimeFormat(pattern = "yyyy-MM-dd'T'HH:mm")
-    private LocalDateTime screeningTime;
+    private Long seatId;
+    private Long screeningId;
+    private LocalDateTime expiresAt;
 }

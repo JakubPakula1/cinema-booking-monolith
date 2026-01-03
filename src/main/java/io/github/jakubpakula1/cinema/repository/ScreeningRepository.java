@@ -13,5 +13,16 @@ public interface ScreeningRepository extends JpaRepository<Screening, Long> {
     boolean existsByRoomIdAndStartTimeBeforeAndEndTimeAfter(Long roomId, LocalDateTime endTime, LocalDateTime startTime);
 
     // Find screenings in the given room that overlap with the given time range
+
     List<Screening> findByRoomIdAndStartTimeBeforeAndEndTimeAfter(Long roomId, LocalDateTime endTime, LocalDateTime startTime);
+    // Validate if there is a screening in the given room that overlaps with the given time range, excluding a specific screening ID
+    boolean existsByRoomIdAndStartTimeBeforeAndEndTimeAfterAndIdNot(
+            Long roomId,
+            LocalDateTime endTime,
+            LocalDateTime startTime,
+            Long excludeScreeningId
+    );
+
+    // Find all screenings between the given time range, ordered by start time ascending
+    List<Screening> findAllByStartTimeBetweenOrderByStartTimeAsc(LocalDateTime from, LocalDateTime to);
 }

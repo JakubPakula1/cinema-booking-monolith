@@ -11,10 +11,20 @@ import java.util.List;
 
 @Repository
 public interface TemporaryReservationRepository extends JpaRepository<TemporaryReservation, Long> {
-    @Query("SELECT new io.github.jakubpakula1.cinema.dto.SeatUserLockDTO(tr.user.id,tr.seat.id) FROM TemporaryReservation tr WHERE tr.screening.id = :screeningId AND tr.expiresAt > CURRENT_TIMESTAMP")
+    @Query("SELECT new io.github.jakubpakula1.cinema.dto.SeatUserLockDTO(tr.user.id,tr.seat.id, tr.expiresAt) FROM TemporaryReservation tr WHERE tr.screening.id = :screeningId AND tr.expiresAt > CURRENT_TIMESTAMP")
     List<SeatUserLockDTO> findLockedSeatIdsByScreeningId(@Param("screeningId") Long screeningId);
 
     boolean existsBySeatIdAndScreeningIdAndExpiresAtAfter(Long seat_id, Long screening_id, LocalDateTime expiresAt);
 
+    // Method to delete TemporaryReservation by screeningId and seatId
     TemporaryReservation deleteTemporaryReservationByScreeningIdAndSeatId(Long screeningId, Long seatId);
+
+    // Method to find all TemporaryReservations by userId that have not expired
+    List<TemporaryReservation> findAllByUserIdAndExpiresAtAfter(Long userId, LocalDateTime now);
+
+    // Method to find TemporaryReservations by userId, seatId, and screeningId
+    List<TemporaryReservation> findByUserIdAndSeatIdAndScreeningId(Long userId, Long seatId, Long screeningId);
+
+    // Method to delete all TemporaryReservations that have expired
+    void deleteByExpiresAtBefore(LocalDateTime now);
 }

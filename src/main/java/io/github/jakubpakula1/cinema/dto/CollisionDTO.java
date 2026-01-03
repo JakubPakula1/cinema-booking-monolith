@@ -12,4 +12,5 @@ public class CollisionDTO {
     private String roomName;
     private LocalDateTime screeningTime;
     private LocalDateTime endTime;
+    private Long cleaningDurationMinutes;
 }
