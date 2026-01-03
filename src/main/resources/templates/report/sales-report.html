@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout}">
+<head>
+    <title>Sales Report</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+
+<div layout:fragment="content">
+    <div class="container cinema-section">
+        <h2 class="text-white mb-4">Ticket Sales Report</h2>
+
+        <div class="row">
+            <div class="col-lg-8 mb-4">
+                <div class="card bg-surface border-0 p-3 shadow-lg">
+                    <canvas id="salesChart"></canvas>
+                </div>
+            </div>
+
+            <div class="col-lg-4">
+                <div class="card bg-surface border-0 p-3 shadow-lg" style="max-height: 500px; overflow-y: auto;">
+                    <h5 class="text-white mb-3">Detailed Data</h5>
+                    <table class="table table-dark table-striped table-sm">
+                        <thead>
+                        <tr>
+                            <th>Date</th>
+                            <th>Tickets</th>
+                            <th>Revenue</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr th:each="row : ${stats}">
+                            <td th:text="${row.date}">2023-05-12</td>
+                            <td th:text="${row.ticketsSold}">50</td>
+                            <td class="text-gold" th:text="${row.totalRevenue} + ' PLN'">1200 PLN</td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<th:block layout:fragment="scripts">
+    <script th:inline="javascript">
+        const statsData = [[${stats}]];
+
+        statsData.reverse();
+
+        const labels = statsData.map(item => item.date);
+        const revenues = statsData.map(item => item.totalRevenue);
+        const ticketCounts = statsData.map(item => item.ticketsSold);
+
+
+        const ctx = document.getElementById('salesChart').getContext('2d');
+        new Chart(ctx, {
+            type: 'bar',
+            data: {
+                labels: labels,
+                datasets: [
+                    {
+                        label: 'Revenue (PLN)',
+                        data: revenues,
+                        backgroundColor: 'rgba(212, 175, 55, 0.7)',
+                        borderColor: 'rgba(212, 175, 55, 1)',
+                        borderWidth: 1,
+                        yAxisID: 'y'
+                    },
+                    {
+                        label: 'Tickets Sold',
+                        data: ticketCounts,
+                        type: 'line',
+                        borderColor: 'rgba(255, 99, 132, 1)',
+                        tension: 0.3,
+                        yAxisID: 'y1'
+                    }
+                ]
+            },
+            options: {
+                responsive: true,
+                interaction: {
+                    mode: 'index',
+                    intersect: false,
+                },
+                scales: {
+                    y: {
+                        type: 'linear',
+                        display: true,
+                        position: 'left',
+                        grid: { color: 'rgba(255, 255, 255, 0.1)' }
+                    },
+                    y1: {
+                        type: 'linear',
+                        display: true,
+                        position: 'right',
+                        grid: { drawOnChartArea: false }
+                    }
+                },
+                plugins: {
+                    legend: { labels: { color: 'white' } }
+                }
+            }
+        });
+    </script>
+</th:block>
+
+</body>
+</html>
