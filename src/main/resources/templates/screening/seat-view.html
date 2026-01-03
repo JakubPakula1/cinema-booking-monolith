@@ -34,11 +34,9 @@
             <div class="seats-grid">
                 <div th:each="seat : ${seats}"
                      class="seat-wrapper"
-                     th:classappend="${!seat.isAvailable && seat.userId == #authentication.principal.id} ? 'selected' : (!seat.isAvailable ? 'taken' : 'available')"
+                     th:classappend="${seat.isSold ? 'taken' : (!seat.isAvailable && seat.userId == #authentication.principal.id ? 'selected' : (!seat.isAvailable ? 'taken' : 'available'))}"
                      th:data-id="${seat.seatId}"
-
-                     th:data-expires-at="${(!seat.isAvailable && seat.userId == #authentication.principal.id) ? seat.expiresAt : ''}"
-
+                     th:data-expires-at="${(!seat.isAvailable && seat.userId == #authentication.principal.id && !seat.isSold) ? seat.expiresAt : ''}"
                      th:onclick="toggleSeat(this)">
 
                     <div class="seat-shape">

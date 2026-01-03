@@ -8,6 +8,7 @@ import io.github.jakubpakula1.cinema.exception.ScreeningDateInPastException;
 import io.github.jakubpakula1.cinema.exception.ScreeningOverlapException;
 import io.github.jakubpakula1.cinema.model.*;
 import io.github.jakubpakula1.cinema.repository.*;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -19,6 +20,7 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
+@Slf4j
 public class ScreeningService {
     private final ScreeningRepository screeningRepository;
     private final MovieRepository movieRepository;
@@ -189,7 +191,8 @@ public class ScreeningService {
         List<Seat> allSeats = seatRepository.findAllByRoomId(room.getId());
 
         Set<Long> soldSeatIds = new HashSet<>(ticketRepository.findSoldSeatIdsByScreeningId(screeningId));
-
+        log.info("===========================================================");
+        log.info(soldSeatIds.toString());
         List<SeatUserLockDTO> lockedSeats = temporaryReservationRepository.findLockedSeatIdsByScreeningId(screeningId);
         Map<Long, SeatUserLockDTO> locksMap = lockedSeats.stream()
                 .collect(Collectors.toMap(SeatUserLockDTO::getSeatId, lock -> lock));
@@ -199,7 +202,7 @@ public class ScreeningService {
                     Long seatId = seat.getId();
 
                     boolean isSold = soldSeatIds.contains(seatId);
-                    SeatUserLockDTO lockInfo = locksMap.get(seatId); // Pobieramy info o blokadzie z mapy
+                    SeatUserLockDTO lockInfo = locksMap.get(seatId);
                     boolean isLocked = (lockInfo != null);
 
                     boolean isTaken = isSold || isLocked;
@@ -212,6 +215,7 @@ public class ScreeningService {
                             .seatNumber(seat.getSeatNumber())
                             .userId(userId)
                             .isAvailable(!isTaken)
+                            .isSold(isSold)
                             .expiresAt(expiresAt)
                             .build();
                 })

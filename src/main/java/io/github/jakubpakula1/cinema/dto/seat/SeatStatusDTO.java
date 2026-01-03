@@ -15,6 +15,6 @@ public class SeatStatusDTO {
     private  int seatNumber;
     private Long userId; // Nullable, null if seat is available
     private boolean isAvailable;
-
+    private boolean isSold;
     private LocalDateTime expiresAt; // Nullable, null if seat is available
 }

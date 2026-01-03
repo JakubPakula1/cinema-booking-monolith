@@ -7,7 +7,6 @@ import io.github.jakubpakula1.cinema.exception.ResourceNotFoundException;
 import io.github.jakubpakula1.cinema.model.*;
 import io.github.jakubpakula1.cinema.repository.OrderRepository;
 import io.github.jakubpakula1.cinema.repository.TemporaryReservationRepository;
-import io.github.jakubpakula1.cinema.repository.TicketRepository;
 import io.github.jakubpakula1.cinema.repository.TicketTypeRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -29,17 +28,12 @@ public class BookingService {
     @Transactional(readOnly = true)
     public Order getOrderSummary(Long orderId, String userEmail) throws AccessDeniedException {
 
-        // 1. Pobierz zamówienie
         Order order = orderRepository.findById(orderId)
                 .orElseThrow(() -> new ResourceNotFoundException("Nie znaleziono zamówienia o ID: " + orderId));
 
-        // 2. SPRAWDŹ BEZPIECZEŃSTWO (Logika biznesowa)
-        // Czy email w zamówieniu zgadza się z mailem zalogowanego użytkownika?
         if (!order.getUser().getEmail().equals(userEmail)) {
-            // Rzuć wyjątek, który GlobalExceptionHandler zamieni na błąd 403 Forbidden
             throw new AccessDeniedException("Nie masz uprawnień do wyświetlenia tego zamówienia.");
         }
-
         return order;
     }
     @Transactional

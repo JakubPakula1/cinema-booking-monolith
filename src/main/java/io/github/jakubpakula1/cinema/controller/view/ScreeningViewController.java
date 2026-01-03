@@ -86,7 +86,6 @@ public class ScreeningViewController {
 
     @GetMapping("booking/success/{orderId}")
     public String successPage(@PathVariable Long orderId, Model model, @AuthenticationPrincipal UserDetails userDetails) throws AccessDeniedException {
-        // Sprawdź czy to zamówienie tego usera (bezpieczeństwo!)
         Order order = bookingService.getOrderSummary(orderId, userDetails.getUsername());
 
         model.addAttribute("order", order);

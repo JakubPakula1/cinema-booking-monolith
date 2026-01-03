@@ -7,6 +7,8 @@ import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 
+import java.nio.file.AccessDeniedException;
+
 @ControllerAdvice
 @RequiredArgsConstructor
 public class GlobalExceptionHandler {
@@ -18,6 +20,16 @@ public class GlobalExceptionHandler {
 
         model.addAttribute("errorMessage", e.getMessage());
         model.addAttribute("errorCode", "404");
+
+        return "error/error-page";
+    }
+    @ExceptionHandler(AccessDeniedException.class)
+    @ResponseStatus(HttpStatus.FORBIDDEN)
+    public String handleAccessDenied(AccessDeniedException e, Model model) {
+        System.err.println("Error 403: " + e.getMessage());
+
+        model.addAttribute("errorMessage", e.getMessage());
+        model.addAttribute("errorCode", "403");
 
         return "error/error-page";
     }
