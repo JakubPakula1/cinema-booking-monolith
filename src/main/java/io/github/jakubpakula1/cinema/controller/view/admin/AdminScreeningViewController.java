@@ -1,6 +1,6 @@
 package io.github.jakubpakula1.cinema.controller.view.admin;
 
-import io.github.jakubpakula1.cinema.dto.ScreeningDTO;
+import io.github.jakubpakula1.cinema.dto.screening.ScreeningDTO;
 import io.github.jakubpakula1.cinema.exception.ScreeningDateInPastException;
 import io.github.jakubpakula1.cinema.exception.ScreeningOverlapException;
 import io.github.jakubpakula1.cinema.service.MovieService;

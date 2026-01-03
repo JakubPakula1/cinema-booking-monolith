@@ -1,4 +1,4 @@
-package io.github.jakubpakula1.cinema.dto;
+package io.github.jakubpakula1.cinema.dto.screening;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;

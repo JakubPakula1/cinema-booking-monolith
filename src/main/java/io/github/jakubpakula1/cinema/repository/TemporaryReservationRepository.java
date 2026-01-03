@@ -1,7 +1,8 @@
 package io.github.jakubpakula1.cinema.repository;
 
-import io.github.jakubpakula1.cinema.dto.SeatUserLockDTO;
+import io.github.jakubpakula1.cinema.dto.seat.SeatUserLockDTO;
 import io.github.jakubpakula1.cinema.model.TemporaryReservation;
+import io.github.jakubpakula1.cinema.model.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -11,7 +12,7 @@ import java.util.List;
 
 @Repository
 public interface TemporaryReservationRepository extends JpaRepository<TemporaryReservation, Long> {
-    @Query("SELECT new io.github.jakubpakula1.cinema.dto.SeatUserLockDTO(tr.user.id,tr.seat.id, tr.expiresAt) FROM TemporaryReservation tr WHERE tr.screening.id = :screeningId AND tr.expiresAt > CURRENT_TIMESTAMP")
+    @Query("SELECT new io.github.jakubpakula1.cinema.dto.seat.SeatUserLockDTO(tr.user.id,tr.seat.id, tr.expiresAt) FROM TemporaryReservation tr WHERE tr.screening.id = :screeningId AND tr.expiresAt > CURRENT_TIMESTAMP")
     List<SeatUserLockDTO> findLockedSeatIdsByScreeningId(@Param("screeningId") Long screeningId);
 
     boolean existsBySeatIdAndScreeningIdAndExpiresAtAfter(Long seat_id, Long screening_id, LocalDateTime expiresAt);
@@ -21,6 +22,9 @@ public interface TemporaryReservationRepository extends JpaRepository<TemporaryR
 
     // Method to find all TemporaryReservations by userId that have not expired
     List<TemporaryReservation> findAllByUserIdAndExpiresAtAfter(Long userId, LocalDateTime now);
+
+    // Method to find TemporaryReservations by userId, a list of seatIds, and that have not expired
+    List<TemporaryReservation> findByUserAndSeatIdInAndExpiresAtAfter(User user, List<Long> seatIds, LocalDateTime now);
 
     // Method to find TemporaryReservations by userId, seatId, and screeningId
     List<TemporaryReservation> findByUserIdAndSeatIdAndScreeningId(Long userId, Long seatId, Long screeningId);

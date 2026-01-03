@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout}"
+      lang="en">
+<body>
+<div layout:fragment="content">
+    <div class="container text-center cinema-section py-5">
+
+        <i class="bi bi-check-circle-fill text-success" style="font-size: 5rem;"></i>
+
+        <h1 class="text-white mt-4 fw-bold">Thank you for your purchase!</h1>
+        <p class="text-secondary fs-5">Your reservation has been confirmed.</p>
+
+        <div class="card bg-surface border-0 p-4 d-inline-block mt-4 text-start shadow-lg" style="min-width: 400px;">
+            <h5 class="text-white border-bottom border-secondary pb-2 mb-3">Order Details</h5>
+
+            <div class="d-flex justify-content-between mb-2">
+                <span class="text-secondary">Order Number:</span>
+                <span class="text-white fw-bold" th:text="'#' + ${order.id}">#123</span>
+            </div>
+            <div class="d-flex justify-content-between mb-2">
+                <span class="text-secondary">Amount:</span>
+                <span class="text-light fw-bold" th:text="${order.totalCost} + ' PLN'">50 PLN</span>
+            </div>
+            <div class="d-flex justify-content-between">
+                <span class="text-secondary">Movie:</span>
+                <span class="text-white" th:text="${order.tickets[0].screening.movie.title}">Avatar</span>
+            </div>
+        </div>
+
+        <div class="mt-5 d-flex justify-content-center gap-3">
+            <a href="/" class="btn btn-outline-light px-4">Back to Schedule</a>
+
+            <a th:href="@{/api/v1/tickets/{id}/pdf(id=${order.id})}" class="btn btn-gold px-4 fw-bold">
+                <i class="bi bi-download me-2"></i> Download Tickets (PDF)
+            </a>
+        </div>
+
+    </div>
+</div>
+</body>
+</html>

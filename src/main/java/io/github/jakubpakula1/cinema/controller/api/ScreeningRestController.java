@@ -1,6 +1,6 @@
 package io.github.jakubpakula1.cinema.controller.api;
 
-import io.github.jakubpakula1.cinema.dto.CollisionDTO;
+import io.github.jakubpakula1.cinema.dto.screening.CollisionDTO;
 import io.github.jakubpakula1.cinema.service.ScreeningService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.format.annotation.DateTimeFormat;

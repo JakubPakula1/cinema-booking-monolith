@@ -1,6 +1,8 @@
 package io.github.jakubpakula1.cinema.service;
 
-import io.github.jakubpakula1.cinema.dto.*;
+import io.github.jakubpakula1.cinema.dto.screening.*;
+import io.github.jakubpakula1.cinema.dto.seat.SeatStatusDTO;
+import io.github.jakubpakula1.cinema.dto.seat.SeatUserLockDTO;
 import io.github.jakubpakula1.cinema.exception.ResourceNotFoundException;
 import io.github.jakubpakula1.cinema.exception.ScreeningDateInPastException;
 import io.github.jakubpakula1.cinema.exception.ScreeningOverlapException;

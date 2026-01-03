@@ -1,6 +1,6 @@
 package io.github.jakubpakula1.cinema.controller.view;
 
-import io.github.jakubpakula1.cinema.dto.RepertoireMovieDTO;
+import io.github.jakubpakula1.cinema.dto.screening.RepertoireMovieDTO;
 import io.github.jakubpakula1.cinema.service.ScreeningService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;

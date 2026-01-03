@@ -1,7 +1,7 @@
 package io.github.jakubpakula1.cinema.service;
 
-import io.github.jakubpakula1.cinema.dto.BookingSummaryDTO;
-import io.github.jakubpakula1.cinema.dto.ReservationRequestDTO;
+import io.github.jakubpakula1.cinema.dto.booking.BookingSummaryDTO;
+import io.github.jakubpakula1.cinema.dto.reservation.ReservationRequestDTO;
 import io.github.jakubpakula1.cinema.model.TicketType;
 import io.github.jakubpakula1.cinema.exception.EmptyCartException;
 import io.github.jakubpakula1.cinema.exception.ResourceNotFoundException;

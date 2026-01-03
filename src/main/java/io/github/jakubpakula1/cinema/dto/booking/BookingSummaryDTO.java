@@ -1,4 +1,4 @@
-package io.github.jakubpakula1.cinema.dto;
+package io.github.jakubpakula1.cinema.dto.booking;
 
 import io.github.jakubpakula1.cinema.model.TicketType;
 import io.github.jakubpakula1.cinema.model.Movie;

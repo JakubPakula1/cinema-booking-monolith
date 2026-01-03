@@ -1,7 +1,7 @@
 package io.github.jakubpakula1.cinema.controller.api;
 
-import io.github.jakubpakula1.cinema.dto.ReservationRequestDTO;
-import io.github.jakubpakula1.cinema.dto.ReservationResponseDTO;
+import io.github.jakubpakula1.cinema.dto.reservation.ReservationRequestDTO;
+import io.github.jakubpakula1.cinema.dto.reservation.ReservationResponseDTO;
 import io.github.jakubpakula1.cinema.model.TemporaryReservation;
 import io.github.jakubpakula1.cinema.model.User;
 import io.github.jakubpakula1.cinema.service.ReservationService;

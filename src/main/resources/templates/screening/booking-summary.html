@@ -2,9 +2,9 @@
 <html xmlns:th="http://www.thymeleaf.org"
       xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
       layout:decorate="~{layout}"
-      lang="pl">
+      lang="en">
 <head>
-    <title>Podsumowanie - Cinema App</title>
+    <title>Summary - Cinema App</title>
 </head>
 <body>
 
@@ -13,7 +13,7 @@
 
         <h2 class="mb-5 border-start border-4 border-danger ps-3 text-white">Summary</h2>
 
-        <form th:action="@{/booking/process}" method="post" id="bookingForm">
+        <form th:action="@{/screenings/booking/process}" method="post" id="bookingForm">
             <div class="row g-5">
 
                 <div class="col-lg-8">
@@ -28,8 +28,8 @@
                                     <span th:text="${res.seat.seatNumber}">5</span>
                                 </div>
                                 <div>
-                                    <h6 class="mb-0 text-white">Miejsce <span th:text="${res.seat.seatNumber}">5</span></h6>
-                                    <small class="text-secondary">Rząd <span th:text="${res.seat.rowNumber}">A</span></small>
+                                    <h6 class="mb-0 text-white">Seat <span th:text="${res.seat.seatNumber}">5</span></h6>
+                                    <small class="text-secondary">Row <span th:text="${res.seat.rowNumber}">A</span></small>
                                 </div>
                             </div>
 
@@ -41,7 +41,7 @@
                                             th:value="${type.id}"
                                             th:data-price="${type.price}"
                                             th:text="${type.name} + ' - ' + ${type.price} + ' PLN'">
-                                        Normalny - 25.00 PLN
+                                        Standard - 25.00 PLN
                                     </option>
                                 </select>
 
@@ -80,29 +80,29 @@
 
                         <div class="receipt-body p-4 bg-surface">
                             <div class="d-flex justify-content-between mb-2">
-                                <span class="text-secondary">Data:</span>
+                                <span class="text-secondary">Date:</span>
                                 <span class="text-white fw-bold" th:text="${#temporals.format(summary.screening.startTime, 'dd.MM.yyyy')}">12.05.2023</span>
                             </div>
                             <div class="d-flex justify-content-between mb-2">
-                                <span class="text-secondary">Godzina:</span>
+                                <span class="text-secondary">Time:</span>
                                 <span class="text-white fw-bold" th:text="${#temporals.format(summary.screening.startTime, 'HH:mm')}">18:00</span>
                             </div>
                             <div class="d-flex justify-content-between mb-4 border-bottom border-secondary border-opacity-25 pb-3">
-                                <span class="text-secondary">Sala:</span>
-                                <span class="text-white fw-bold" th:text="${summary.screening.room.name}">Sala 1</span>
+                                <span class="text-secondary">Room:</span>
+                                <span class="text-white fw-bold" th:text="${summary.screening.room.name}">Room 1</span>
                             </div>
 
                             <div class="d-flex justify-content-between align-items-center mb-4">
-                                <span class="fs-5 text-secondary">Do zapłaty:</span>
+                                <span class="fs-5 text-secondary">Total:</span>
                                 <span class="fs-2 fw-bold text-danger" id="totalPriceDisplay">0.00 PLN</span>
                             </div>
 
                             <button type="submit" class="btn btn-gold w-100 py-3 fw-bold shadow-lg">
-                                Potwierdź i Płacę <i class="bi bi-credit-card-2-back ms-2"></i>
+                                Confirm and Pay <i class="bi bi-credit-card-2-back ms-2"></i>
                             </button>
 
                             <div class="text-center mt-3">
-                                <small class="text-danger" id="timer" th:data-expiration="${#temporals.formatISO(summary.expirationTime)}">Czas na rezerwację: 15:00</small>
+                                <small class="text-danger" id="timer" th:data-expiration="${#temporals.formatISO(summary.expirationTime)}">Reservation time: 15:00</small>
                             </div>
                         </div>
                     </div>
@@ -137,7 +137,7 @@
             const remainingMs = expirationTime - now;
 
             if (remainingMs <= 0) {
-                timerElement.innerText = "Czas minął!";
+                timerElement.innerText = "Time expired!";
                 document.querySelector('button[type="submit"]').disabled = true;
                 clearInterval(timerInterval);
                 return;
@@ -148,7 +148,7 @@
             const seconds = totalSeconds % 60;
             const formattedSeconds = seconds < 10 ? '0' + seconds : seconds;
 
-            timerElement.innerText = `Czas na rezerwację: ${minutes}:${formattedSeconds}`;
+            timerElement.innerText = `Reservation time: ${minutes}:${formattedSeconds}`;
         }, 1000);
     </script>
 </th:block>

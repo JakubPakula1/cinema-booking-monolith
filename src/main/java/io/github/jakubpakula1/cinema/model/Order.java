@@ -19,7 +19,7 @@ public class Order {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private LocalDateTime reservationTime;
+    private LocalDateTime createdAt;
 
     private BigDecimal totalCost;
 
