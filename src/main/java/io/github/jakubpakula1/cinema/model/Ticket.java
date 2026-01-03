@@ -1,8 +1,8 @@
 package io.github.jakubpakula1.cinema.model;
 
-import io.github.jakubpakula1.cinema.enums.TicketType;
 import jakarta.persistence.*;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.math.BigDecimal;
@@ -10,6 +10,7 @@ import java.math.BigDecimal;
 @Setter
 @Getter
 @Entity
+@NoArgsConstructor
 @Table(name = "tickets", uniqueConstraints = {
         @UniqueConstraint(columnNames = {"screening_id", "seat_id"})
 })
@@ -18,24 +19,23 @@ public class Ticket {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Enumerated(EnumType.STRING)
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "ticket_type_id", nullable = false)
     private TicketType ticketType;
 
+    @Column(nullable = false)
     private BigDecimal price;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "order_id", nullable = false)
     private Order order;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "screening_id", nullable = false)
     private Screening screening;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "seat_id", nullable = false)
     private Seat seat;
-
-    public Ticket() {
-    }
 
 }
