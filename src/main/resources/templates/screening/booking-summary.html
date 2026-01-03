@@ -102,7 +102,7 @@
                             </button>
 
                             <div class="text-center mt-3">
-                                <small class="text-danger" id="timer">Czas na rezerwację: 15:00</small>
+                                <small class="text-danger" id="timer" th:data-expiration="${#temporals.formatISO(summary.expirationTime)}">Czas na rezerwację: 15:00</small>
                             </div>
                         </div>
                     </div>
@@ -129,19 +129,26 @@
 
         document.addEventListener('DOMContentLoaded', updateTotal);
 
-        let time = 15 * 60;
         const timerElement = document.getElementById('timer');
+        const expirationTime = new Date(timerElement.getAttribute('data-expiration'));
 
-        setInterval(() => {
-            const minutes = Math.floor(time / 60);
-            let seconds = time % 60;
-            seconds = seconds < 10 ? '0' + seconds : seconds;
-            timerElement.innerText = `Czas na rezerwację: ${minutes}:${seconds}`;
-            if (time > 0) time--;
-            else {
+        const timerInterval = setInterval(() => {
+            const now = new Date();
+            const remainingMs = expirationTime - now;
+
+            if (remainingMs <= 0) {
                 timerElement.innerText = "Czas minął!";
                 document.querySelector('button[type="submit"]').disabled = true;
+                clearInterval(timerInterval);
+                return;
             }
+
+            const totalSeconds = Math.floor(remainingMs / 1000);
+            const minutes = Math.floor(totalSeconds / 60);
+            const seconds = totalSeconds % 60;
+            const formattedSeconds = seconds < 10 ? '0' + seconds : seconds;
+
+            timerElement.innerText = `Czas na rezerwację: ${minutes}:${formattedSeconds}`;
         }, 1000);
     </script>
 </th:block>

@@ -8,6 +8,7 @@ import io.github.jakubpakula1.cinema.model.User;
 import lombok.Builder;
 import lombok.Data;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Data
@@ -18,4 +19,5 @@ public class BookingSummaryDTO {
     private Movie movie;
     private List<TicketType> ticketTypes;
     private User user;
+    private LocalDateTime expirationTime;
 }

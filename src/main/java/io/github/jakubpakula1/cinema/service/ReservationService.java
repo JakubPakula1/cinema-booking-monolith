@@ -8,6 +8,7 @@ import io.github.jakubpakula1.cinema.exception.ResourceNotFoundException;
 import io.github.jakubpakula1.cinema.model.*;
 import io.github.jakubpakula1.cinema.repository.*;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -23,7 +24,8 @@ public class ReservationService {
     private final TemporaryReservationRepository temporaryReservationRepository;
     private final UserService userService;
     private final TicketTypeRepository ticketTypeRepository;
-    private static final int RESERVATION_TIME_MINUTES = 1;
+    @Value("${cinema.reservation-expiration-minutes}")
+    private  int RESERVATION_TIME_MINUTES;
 
      @Transactional
     public TemporaryReservation createTemporaryReservation(ReservationRequestDTO request, User user) {
@@ -75,13 +77,19 @@ public class ReservationService {
         temporaryReservationRepository.deleteAll(reservations);
     }
 
+    @Transactional
     public BookingSummaryDTO prepareSummary(String userEmail) {
         User user = userService.getUserByEmail(userEmail);
 
         List<TemporaryReservation> reservations = temporaryReservationRepository.findAllByUserIdAndExpiresAtAfter(user.getId(), LocalDateTime.now());
+        LocalDateTime newExpirationTime = LocalDateTime.now().plusMinutes(RESERVATION_TIME_MINUTES);
 
         if (reservations.isEmpty()) {
             throw new EmptyCartException("Your cart is empty!");
+        }
+
+        for (TemporaryReservation reservation : reservations) {
+            reservation.setExpiresAt(newExpirationTime);
         }
 
         Screening screening = reservations.getFirst().getScreening();
@@ -95,6 +103,7 @@ public class ReservationService {
                 .movie(movie)
                 .ticketTypes(ticketTypes)
                 .user(user)
+                .expirationTime(newExpirationTime)
                 .build();
     }
 }
