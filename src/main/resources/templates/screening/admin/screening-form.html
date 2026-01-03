@@ -25,9 +25,11 @@
             </div>
 
             <div class="admin-form-card">
-                <form th:action="@{/admin/screenings/add}" th:object="${screening}" method="post">
+                <form th:action="${action == 'add'} ? @{/admin/screenings/add} : @{/admin/screenings/edit/{id}(id=${screening.id})}"
+                      th:object="${screening}"
+                      th:method="${action == 'add'} ? 'post' : 'put'">
 
-                    <div class="mb-4">
+                <div class="mb-4">
                         <label for="movie" class="form-label">Select Movie</label>
                         <div class="input-group">
                             <span class="input-group-text"><i class="bi bi-film"></i></span>
@@ -66,7 +68,7 @@
 
                     <div class="d-grid gap-3 mt-5">
                         <button type="submit" class="btn btn-gold btn-lg">
-                            <i class="bi bi-plus-circle me-2"></i> Add Screening
+                            <span th:text="${action == 'add'} ? 'Add Screening' : 'Edit Screening'">Add Screening</span>
                         </button>
 
                         <button type="button" class="btn btn-outline-danger" id="checkConflictsBtn">
@@ -99,11 +101,6 @@
             const movieId = document.getElementById('movie').value;
             const screeningTime = document.getElementById('screeningTime').value;
 
-            if (!roomId || !movieId || !screeningTime) {
-                alert("Please fill in all fields first.");
-                return;
-            }
-
             // Loading state
             btn.innerHTML = '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Checking...';
 
@@ -134,12 +131,16 @@
                             const start = new Date(screening.screeningTime).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
                             const end = new Date(screening.endTime).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
 
+                            const roomFreeTime = new Date(new Date(screening.endTime).getTime() + screening.cleaningDurationMinutes * 60000);
+                            const roomFree = roomFreeTime.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
+
                             item.innerHTML = `
                                 <div class="d-flex justify-content-between align-items-center">
                                     <strong>${screening.movieTitle}</strong>
                                     <span class="badge bg-danger">${start} - ${end}</span>
                                 </div>
                                 <small class="text-secondary">Room: ${screening.roomName}</small>
+                                <small class="text-warning"><i class="bi bi-clock me-1"></i>Room available at: ${roomFree} (after ${screening.cleaningDurationMinutes} min cleaning)</small>
                             `;
                             list.appendChild(item);
                         });

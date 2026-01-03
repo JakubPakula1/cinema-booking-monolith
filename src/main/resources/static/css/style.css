@@ -618,3 +618,265 @@ input[type="datetime-local"] {
 #conflictsSection .list-group-item {
     border-color: rgba(255,255,255,0.1);
 }
+
+/* Date Navigation Buttons */
+.date-btn {
+    min-width: 80px;
+    border-color: rgba(255,255,255,0.1);
+    color: var(--text-secondary);
+    transition: all 0.3s ease;
+}
+
+.date-btn:hover, .date-btn.active {
+    background-color: var(--accent-primary);
+    border-color: var(--accent-primary);
+    color: white;
+    transform: translateY(-2px);
+}
+
+/* Movie Row Card (Horizontal Layout) */
+.movie-row-card {
+    background-color: rgba(43, 45, 66, 0.4);
+    border: 1px solid rgba(255,255,255,0.05);
+    transition: transform 0.2s ease;
+}
+
+.movie-row-card:hover {
+    border-color: rgba(255,255,255,0.2);
+    background-color: rgba(43, 45, 66, 0.7);
+}
+
+/* Time Buttons */
+.time-btn {
+    border-radius: 20px;
+    padding: 5px 15px;
+    font-weight: 600;
+}
+/* =========================================
+   10. SEAT SELECTION
+   ========================================= */
+
+/* Kontener sali */
+.cinema-room-container {
+    perspective: 1000px; /* Daje efekt 3D dla ekranu */
+    max-width: 800px;
+    margin: 0 auto;
+    padding-bottom: 100px; /* Miejsce na sticky footer */
+}
+
+/* EKRAN KINOWY */
+.screen-container {
+    margin-bottom: 60px;
+    text-align: center;
+    position: relative;
+    transform: rotateX(-5deg); /* Lekkie pochylenie ekranu */
+}
+
+.screen {
+    height: 60px;
+    width: 100%;
+    background: #fff;
+    border-radius: 10px;
+    box-shadow: 0 20px 50px rgba(255, 255, 255, 0.4); /* Glow */
+    opacity: 0.8;
+    line-height: 60px;
+    letter-spacing: 10px;
+    color: #000;
+    font-weight: bold;
+    font-size: 0.8rem;
+    transform: scaleX(0.9); /* Trapezoid effect visual trick */
+}
+
+.screen-glow {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(to bottom, rgba(255,255,255,0.3) 0%, transparent 100%);
+    filter: blur(20px);
+    z-index: -1;
+}
+
+/* LEGENDA */
+.seat-legend span {
+    color: var(--text-secondary);
+    font-size: 0.9rem;
+}
+.seat-demo {
+    width: 25px; height: 25px;
+    border-radius: 4px;
+    margin-bottom: 5px;
+    margin: 0 auto;
+}
+.seat-demo.available { background-color: #3d405b; border: 1px solid #8d99ae; }
+.seat-demo.selected { background-color: var(--accent-primary); box-shadow: 0 0 10px var(--accent-primary); }
+.seat-demo.taken { background-color: #1a1b26; opacity: 0.3; cursor: not-allowed; }
+
+
+/* SIATKA FOTELI */
+.seats-grid {
+    display: grid;
+    /* Zakładam 10 miejsc w rzędzie. Zmień zależnie od logiki sali */
+    grid-template-columns: repeat(10, 1fr);
+    gap: 15px 10px; /* Rzędy x Kolumny */
+    justify-content: center;
+}
+
+/* POJEDYNCZY FOTEL */
+.seat-wrapper {
+    position: relative;
+    height: 45px;
+    width: 100%;
+    cursor: pointer;
+    transition: transform 0.2s ease;
+}
+
+.seat-wrapper:hover:not(.taken) {
+    transform: scale(1.1);
+}
+
+/* Kształt fotela */
+.seat-shape {
+    height: 35px;
+    width: 100%;
+    /* ZMIANA: Zaokrąglamy dół (oparcie), a górę (przód) zostawiamy bardziej prostą */
+    border-radius: 5px 5px 12px 12px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.75rem;
+    color: #fff;
+    position: relative;
+    z-index: 2;
+    transition: all 0.3s ease;
+
+    /* Opcjonalnie: dodaj cień wewnątrz, żeby oparcie na dole wydawało się wypukłe */
+    box-shadow: inset 0 -3px 5px rgba(0,0,0,0.2);
+}
+
+/* Podłokietniki */
+.seat-armrest {
+    position: absolute;
+    /* ZMIANA: Zamiast 'bottom: 0', dajemy 'top: 5px' -> przesuwamy je w stronę ekranu */
+    top: -10px;
+
+    width: 8px;
+    height: 22px; /* Trochę dłuższe, żeby objęły uda widza */
+    background-color: inherit;
+    border-radius: 4px;
+    z-index: 1;
+}
+
+/* Dostosowanie pozycji bocznej (bez zmian, ale dla pewności wklejam) */
+.seat-armrest.left { left: -2px; }
+.seat-armrest.right { right: -2px; }
+
+
+/* KOLORY FOTELI (STANY) */
+
+/* 1. Wolne */
+.seat-wrapper.available .seat-shape,
+.seat-wrapper.available .seat-armrest {
+    background-color: #3d405b; /* Ciemny szary */
+    border: 1px solid rgba(255,255,255,0.1);
+}
+
+/* 2. Wybrane (Moje) */
+.seat-wrapper.selected .seat-shape,
+.seat-wrapper.selected .seat-armrest {
+    background-color: var(--accent-primary); /* Czerwony */
+    box-shadow: 0 0 15px rgba(239, 35, 60, 0.4);
+    border: none;
+}
+
+/* 3. Zajęte (Inni) */
+.seat-wrapper.taken {
+    pointer-events: none; /* Nieklikalne */
+}
+.seat-wrapper.taken .seat-shape,
+.seat-wrapper.taken .seat-armrest {
+    background-color: #16171f; /* Prawie czarny */
+    opacity: 0.5;
+}
+.seat-wrapper.taken .seat-number {
+    display: none; /* Ukryj numer na zajętych */
+}
+.seat-wrapper.taken::after {
+    /* "X" na zajętym miejscu */
+    content: '×';
+    position: absolute;
+    top: 50%; left: 50%;
+    transform: translate(-50%, -60%);
+    color: #555;
+    font-size: 1.5rem;
+    z-index: 3;
+}
+
+
+/* STICKY FOOTER BAR */
+.booking-summary-bar {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    background-color: rgba(26, 27, 38, 0.95);
+    border-top: 1px solid var(--accent-primary);
+    padding: 15px 0;
+    z-index: 1000;
+    box-shadow: 0 -5px 20px rgba(0,0,0,0.5);
+    backdrop-filter: blur(10px);
+}
+/* =========================================
+   11. BOOKING SUMMARY
+   ========================================= */
+
+.bg-surface {
+    background-color: rgba(43, 45, 66, 0.6);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    border-radius: 12px;
+}
+
+/* Ikona miejsca w liście */
+.seat-icon-small {
+    width: 40px; height: 40px;
+    background-color: var(--accent-primary);
+    color: white;
+    border-radius: 8px 8px 4px 4px; /* Kształt fotela */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: bold;
+    font-size: 0.9rem;
+    box-shadow: 0 4px 10px rgba(239, 35, 60, 0.3);
+}
+
+/* Karta Paragonu (Receipt) */
+.booking-receipt-card {
+    border-radius: 16px;
+    overflow: hidden;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+    border: 1px solid rgba(255,255,255,0.1);
+}
+
+.receipt-header {
+    height: 150px;
+    background-size: cover;
+    background-position: center;
+    position: relative;
+}
+
+.receipt-overlay {
+    position: absolute;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background: linear-gradient(to top, rgba(43, 45, 66, 1), rgba(43, 45, 66, 0.4));
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+}
+
+.receipt-body {
+    background-color: #2b2d42; /* Pełny kolor, nie przezroczysty, dla czytelności */
+}

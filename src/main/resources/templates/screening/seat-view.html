@@ -1,93 +1,242 @@
-
-
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout}"
+      lang="en">
 <head>
-    <title>Room</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <title>Seat selection</title>
 </head>
-<style>
-    .cinema-room {
-        display: grid;
-        grid-template-columns: repeat(10, 1fr);
-        gap: 10px;
-        max-width: 600px;
-        margin: 0 auto;
-    }
-    .seat {
-        width: 40px;
-        height: 40px;
-        background-color: #28a745;
-        border-radius: 5px;
-        cursor: pointer;
-        text-align: center;
-        line-height: 40px;
-        color: white;
-    }
-    .seat.taken {
-        background-color: #dc3545;
-        cursor: not-allowed;
-    }
-    .seat.selected {
-        background-color: #ffc107;
-    }
-</style>
-<body class="bg-light">
-<h2>Choose seats</h2>
-<h1 th:text="${#authentication.principal.id}"></h1>
-<div class="cinema-room">
-    <div th:each="seat : ${seats}"
-         th:classappend="${!seat.isAvailable && seat.userId == #authentication.principal.id} ? 'selected' : (!seat.isAvailable ? 'taken' : '')"
-         class="seat"
-         th:data-id="${seat.seatId}"
-         th:onclick="${seat.isAvailable || (!seat.isAvailable && seat.userId == #authentication.principal.id)} ? 'toggleSeat(this)' : ''">
+<body>
 
-        <span th:text="${seat.seatNumber}">1</span>
+<div layout:fragment="content">
+    <div class="container cinema-section pb-5 mb-5">
+
+        <div class="text-center mb-5">
+            <h2 class="text-white fw-bold">Select seats</h2>
+            <p class="text-secondary" th:if="${movie != null}">
+                <span th:text="${movie.title}">Movie title</span> |
+                <span th:text="${#temporals.format(screeningTime, 'dd.MM HH:mm')}">Date</span>
+            </p>
+        </div>
+
+        <div class="seat-legend d-flex justify-content-center gap-4 mb-5">
+            <div class="legend-item"><div class="seat-demo available"></div><span>Free</span></div>
+            <div class="legend-item"><div class="seat-demo selected"></div><span>Selected</span></div>
+            <div class="legend-item"><div class="seat-demo taken"></div><span>Not available</span></div>
+        </div>
+
+        <div class="cinema-room-container">
+            <div class="screen-container">
+                <div class="screen">SCREEN</div>
+                <div class="screen-glow"></div>
+            </div>
+
+            <div class="seats-grid">
+                <div th:each="seat : ${seats}"
+                     class="seat-wrapper"
+                     th:classappend="${!seat.isAvailable && seat.userId == #authentication.principal.id} ? 'selected' : (!seat.isAvailable ? 'taken' : 'available')"
+                     th:data-id="${seat.seatId}"
+
+                     th:data-expires-at="${(!seat.isAvailable && seat.userId == #authentication.principal.id) ? seat.expiresAt : ''}"
+
+                     th:onclick="toggleSeat(this)">
+
+                    <div class="seat-shape">
+                        <span class="seat-number" th:text="${seat.seatNumber}">1</span>
+                    </div>
+                    <div class="seat-armrest left"></div>
+                    <div class="seat-armrest right"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="booking-summary-bar">
+        <div class="container d-flex justify-content-between align-items-center">
+
+            <div class="d-flex align-items-center gap-4">
+                <div class="text-white">
+                    <small class="text-secondary text-uppercase">Selected seats:</small>
+                    <div class="fs-4 fw-bold" id="selected-count">0</div>
+                </div>
+
+                <div id="timer-container" class="text-warning border-start border-secondary ps-4" style="display: none;">
+                    <small class="text-secondary text-uppercase">Time left:</small>
+                    <div class="fs-4 fw-bold font-monospace" id="global-timer">00:00</div>
+                </div>
+            </div>
+
+            <a href="/booking/summary" id="next-btn" class="btn btn-gold btn-lg disabled">
+                Next <i class="bi bi-arrow-right"></i>
+            </a>
+        </div>
     </div>
 </div>
 
-<a href="/#" class="btn btn-primary mt-4">Next</a>
-
-<script>
-    async function toggleSeat(element) {
-        const seatId = element.getAttribute('data-id');
+<th:block layout:fragment="scripts">
+    <script th:inline="javascript">
         const screeningId = [[${screeningId}]];
+        let timerInterval = null; // Zmienna globalna na interwał
 
-        if (element.classList.contains('selected')) {
-            const response = await fetch('/api/v1/reservations/lock', {
-                method: 'DELETE',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ seatId: seatId, screeningId: screeningId })
-            });
-            if (response.ok) {
-                element.classList.remove('selected');
+        async function toggleSeat(element) {
+            if (element.classList.contains('taken') && !element.classList.contains('selected')) {
                 return;
-            } else {
-                alert('Someone else just took this seat!');
-                location.reload();
-                return;
+            }
+
+            const seatId = element.getAttribute('data-id');
+            const isSelected = element.classList.contains('selected');
+
+            if(element.classList.contains('processing')) return;
+            element.classList.add('processing');
+
+            try {
+                const url = '/api/v1/reservations/lock';
+                const method = isSelected ? 'DELETE' : 'POST';
+
+                const response = await fetch(url, {
+                    method: method,
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ seatId: seatId, screeningId: screeningId })
+                });
+
+                if (response.ok) {
+                    if (isSelected) {
+                        // Usuwamy rezerwację
+                        element.classList.remove('selected');
+                        element.classList.add('available');
+                        element.removeAttribute('data-expires-at'); // Ważne: czyścimy datę
+                    } else {
+                        // Dodajemy rezerwację
+                        const temRes = await response.json(); // Backend musi zwrócić JSON z "expiresAt"
+                        const newExpirationTime = temRes.expiresAt;
+                        element.classList.add('selected');
+                        element.classList.remove('available');
+                        // Ustawiamy datę wygaśnięcia w atrybucie
+                        element.setAttribute('data-expires-at', newExpirationTime);
+
+                        const allSelectedSeats = document.querySelectorAll('.seat-wrapper.selected');
+                        allSelectedSeats.forEach(seat => {
+                            seat.setAttribute('data-expires-at', newExpirationTime);
+                        });
+                    }
+
+                    updateSummary();
+                    // ZMIANA 3: Przeliczamy timer po każdym kliknięciu
+                    recalcGlobalTimer();
+                } else {
+                    alert('Someone else just took this seat!');
+                    location.reload();
+                }
+            } catch (e) {
+                console.error(e);
+            } finally {
+                element.classList.remove('processing');
             }
         }
 
-        try {
-            const response = await fetch('/api/v1/reservations/lock', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ seatId: seatId, screeningId: screeningId })
+        function updateSummary() {
+            const selectedSeats = document.querySelectorAll('.seat-wrapper.selected');
+            const count = selectedSeats.length;
+            document.getElementById('selected-count').innerText = count;
+
+            const btn = document.getElementById('next-btn');
+            if (count > 0) {
+                btn.classList.remove('disabled');
+            } else {
+                btn.classList.add('disabled');
+            }
+        }
+
+        // --- NOWA LOGIKA TIMERA ---
+
+        function recalcGlobalTimer() {
+            // 1. Znajdź wszystkie wybrane fotele, które mają datę ważności
+            const selectedSeats = Array.from(document.querySelectorAll('.seat-wrapper.selected[data-expires-at]'));
+
+            // Jeśli nie ma foteli, wyłącz timer i ukryj go
+            if (selectedSeats.length === 0) {
+                stopTimer();
+                document.getElementById('timer-container').style.display = 'none';
+                return;
+            }
+
+            // 2. Znajdź NAJBLIŻSZĄ datę wygaśnięcia (najmniejszy timestamp)
+            // Użytkownika interesuje, kiedy straci PIERWSZE miejsce.
+            let minExpirationTime = Infinity;
+
+            selectedSeats.forEach(seat => {
+                const expiresAtString = seat.getAttribute('data-expires-at');
+                if (expiresAtString) {
+                    const time = new Date(expiresAtString).getTime();
+                    if (time < minExpirationTime) {
+                        minExpirationTime = time;
+                    }
+                }
             });
 
-            if (response.ok) {
-                element.classList.add('selected');
-            } else {
-                alert('Someone else just took this seat!');
-                location.reload();
-            }
-        } catch (e) {
-            console.error(e);
+            // 3. Uruchom odliczanie do tej konkretnej daty
+            startGlobalTimer(minExpirationTime);
         }
-    }
-</script>
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+        function startGlobalTimer(targetTimeMs) {
+            // Czyścimy stary interwał, żeby nie mieć dwóch liczników
+            stopTimer();
+            document.getElementById('timer-container').style.display = 'block';
+
+            // Funkcja aktualizująca UI
+            const updateUI = () => {
+                const now = new Date().getTime();
+                const diff = targetTimeMs - now;
+
+                if (diff <= 0) {
+                    // Czas minął!
+                    document.getElementById('global-timer').innerText = "00:00";
+                    stopTimer();
+                    alert("Czas na rezerwację minął!");
+                    location.reload(); // Odświeżamy stronę, żeby zresetować stan
+                    return;
+                }
+
+                // Formatowanie MM:SS
+                const minutes = Math.floor(diff / 1000 / 60);
+                const seconds = Math.floor((diff / 1000) % 60);
+
+                const minStr = minutes < 10 ? "0" + minutes : minutes;
+                const secStr = seconds < 10 ? "0" + seconds : seconds;
+
+                document.getElementById('global-timer').innerText = `${minStr}:${secStr}`;
+
+                // Opcjonalnie: Zmień kolor na czerwony, gdy < 60 sekund
+                const timerText = document.getElementById('global-timer');
+                if (diff < 60000) {
+                    timerText.classList.add('text-danger');
+                    timerText.classList.remove('text-white');
+                } else {
+                    timerText.classList.remove('text-danger');
+                    timerText.classList.add('text-white');
+                }
+            };
+
+            // Wywołaj raz natychmiast, potem co sekundę
+            updateUI();
+            timerInterval = setInterval(updateUI, 1000);
+        }
+
+        function stopTimer() {
+            if (timerInterval) {
+                clearInterval(timerInterval);
+                timerInterval = null;
+            }
+        }
+
+        // Start przy ładowaniu strony (ważne przy odświeżaniu F5)
+        document.addEventListener('DOMContentLoaded', () => {
+            updateSummary();
+            recalcGlobalTimer();
+        });
+
+    </script>
+</th:block>
 
 </body>
 </html>
