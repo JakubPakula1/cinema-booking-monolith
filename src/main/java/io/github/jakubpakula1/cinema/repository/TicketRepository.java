@@ -14,4 +14,7 @@ public interface TicketRepository extends JpaRepository<Ticket, Long> {
     List<Long> findSoldSeatIdsByScreeningId(@Param("screeningId") Long screeningId);
 
     boolean existsBySeatIdAndScreeningId(Long seatId, Long screeningId);
+
+    //  Method to find tickets by order ID
+    List<Ticket> findAllByOrderId(Long orderId);
 }

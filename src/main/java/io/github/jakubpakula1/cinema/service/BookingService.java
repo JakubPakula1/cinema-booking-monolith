@@ -24,6 +24,8 @@ public class BookingService {
     private final TemporaryReservationRepository temporaryReservationRepository;
     private final TicketTypeRepository ticketTypeRepository;
     private final OrderRepository orderRepository;
+    private final PdfService pdfService;
+    private final EmailService emailService;
 
     @Transactional(readOnly = true)
     public Order getOrderSummary(Long orderId, String userEmail) throws AccessDeniedException {
@@ -36,6 +38,7 @@ public class BookingService {
         }
         return order;
     }
+
     @Transactional
     public Long finalizeOrder(BookingRequestDTO bookingRequestDTO, User user){
         List<Long> seatIds = bookingRequestDTO.getTickets().stream()
@@ -77,10 +80,17 @@ public class BookingService {
         }
         order.setTotalCost(totalAmount);
         order.setTickets(ticketsToSave);
-
+        byte[] pdfBytes = pdfService.generateTicketPdf(ticketsToSave);
         orderRepository.save(order);
+
+        emailService.sendEmailWithAttachment(user.getEmail(), "Your Cinema Tickets", "Your cinema tickets are attached.", pdfBytes, "tickets_order_" + order.getId() + ".pdf");
         temporaryReservationRepository.deleteAll(myReservations);
 
         return order.getId();
+    }
+
+    @Transactional
+    public List<Order> getAllOrdersForUser(Long id) {
+        return orderRepository.findAllByUserIdOrderByCreatedAtDesc(id);
     }
 }
