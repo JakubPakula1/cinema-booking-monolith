@@ -3,109 +3,193 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Login</title>
+    <title>Login - Cinema App</title>
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
     <style>
+        :root {
+            /* Twoja paleta */
+            --space-indigo: #2b2d42;
+            --lavender-grey: #8d99ae;
+            --platinum: #edf2f4;
+            --punch-red: #ef233c;
+            --flag-red: #d90429;
+            --bg-primary: #1a1b26;
+            --bg-surface: #2b2d42;
+        }
+
         body {
-            font-family: Arial, sans-serif;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             margin: 0;
-            background-color: #f5f5f5;
+            height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            /* Tło: Gradient + Zdjęcie kinowe */
+            background: linear-gradient(rgba(26, 27, 38, 0.85), rgba(26, 27, 38, 0.95)),
+            url('https://images.unsplash.com/photo-1489599849228-ed4dc2ee6c1d?w=1920&q=80');
+            background-size: cover;
+            background-position: center;
         }
-        .login-container {
-            background-color: white;
-            padding: 40px;
-            border-radius: 8px;
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+
+        .login-card {
+            background-color: var(--bg-surface);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 15px;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.5);
+            padding: 2.5rem;
             width: 100%;
-            max-width: 400px;
+            max-width: 420px;
+            color: var(--platinum);
         }
-        h2 {
+
+        .login-title {
             text-align: center;
-            color: #333;
+            font-weight: 700;
+            margin-bottom: 2rem;
+            color: var(--platinum);
+            text-transform: uppercase;
+            letter-spacing: 1px;
         }
-        .form-group {
-            margin-bottom: 20px;
+
+        .form-control {
+            background-color: var(--bg-primary);
+            border: 1px solid #444;
+            color: var(--platinum);
+            padding: 12px;
+            border-radius: 8px;
         }
-        label {
-            display: block;
-            margin-bottom: 5px;
-            color: #555;
-            font-weight: bold;
+
+        .form-control:focus {
+            background-color: var(--bg-primary);
+            border-color: var(--punch-red); /* Czerwony glow przy pisaniu */
+            color: var(--platinum);
+            box-shadow: 0 0 0 0.25rem rgba(239, 35, 60, 0.25);
         }
-        input[type="email"],
-        input[type="password"] {
-            width: 100%;
-            padding: 10px;
-            border: 1px solid #ddd;
-            border-radius: 4px;
-            box-sizing: border-box;
-            font-size: 14px;
+
+        /* Ukrycie domyślnego autofilla przeglądarki (żeby nie był biały) */
+        input:-webkit-autofill,
+        input:-webkit-autofill:hover,
+        input:-webkit-autofill:focus,
+        input:-webkit-autofill:active{
+            -webkit-box-shadow: 0 0 0 30px var(--bg-primary) inset !important;
+            -webkit-text-fill-color: var(--platinum) !important;
+            transition: background-color 5000s ease-in-out 0s;
         }
-        input[type="email"]:focus,
-        input[type="password"]:focus {
-            outline: none;
-            border-color: #4CAF50;
-            box-shadow: 0 0 5px rgba(76, 175, 80, 0.3);
-        }
-        button {
-            width: 100%;
-            padding: 10px;
-            background-color: #4CAF50;
-            color: white;
+
+        .btn-login {
+            background-color: var(--punch-red);
             border: none;
-            border-radius: 4px;
-            font-size: 16px;
+            color: white;
+            padding: 12px;
             font-weight: bold;
-            cursor: pointer;
-            transition: background-color 0.3s;
+            border-radius: 8px;
+            width: 100%;
+            margin-top: 1rem;
+            transition: all 0.3s ease;
         }
-        button:hover {
-            background-color: #45a049;
+
+        .btn-login:hover {
+            background-color: var(--flag-red);
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(217, 4, 41, 0.4);
         }
+
         .register-link {
             text-align: center;
-            margin-top: 20px;
+            margin-top: 1.5rem;
+            color: var(--lavender-grey);
+            font-size: 0.9rem;
         }
+
         .register-link a {
-            color: #4CAF50;
+            color: var(--punch-red);
             text-decoration: none;
+            font-weight: 600;
         }
+
         .register-link a:hover {
             text-decoration: underline;
+            color: var(--platinum);
         }
-        .error-message {
-            color: #d32f2f;
-            margin-bottom: 15px;
-            text-align: center;
+
+        /* Style alertów */
+        .alert-custom {
+            border: none;
+            border-radius: 8px;
+            font-size: 0.9rem;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .alert-error {
+            background-color: rgba(217, 4, 41, 0.2);
+            color: #ffadb6;
+            border-left: 4px solid var(--flag-red);
+        }
+        .alert-success {
+            background-color: rgba(75, 181, 67, 0.2);
+            color: #a3e6b1;
+            border-left: 4px solid #4bb543;
+        }
+
+        label {
+            color: var(--lavender-grey);
+            margin-bottom: 0.5rem;
+            font-size: 0.9rem;
         }
     </style>
 </head>
 <body>
-    <div class="login-container">
-        <h2>Login</h2>
-        <div th:if="${param.error}" class="error-message">
-            Invalid email or password
-        </div>
-        <div th:if="${param.logout}" class="error-message">
-            You have been logged out
-        </div>
-        <form th:action="@{/login}" method="post">
-            <div class="form-group">
-                <label for="username">Email:</label>
-                <input type="email" id="username" name="username" required>
-            </div>
-            <div class="form-group">
-                <label for="password">Password:</label>
-                <input type="password" id="password" name="password" required>
-            </div>
-            <button type="submit">Login</button>
-        </form>
-        <div class="register-link">
-            Don't have an account? <a href="/register">Register here</a>
-        </div>
+
+<div class="login-card">
+    <div class="text-center mb-3">
+        <i class="bi bi-film text-danger" style="font-size: 3rem;"></i>
     </div>
+
+    <h2 class="login-title">Welcome to Cinema</h2>
+
+    <div th:if="${param.error}" class="alert alert-custom alert-error mb-4">
+        <i class="bi bi-exclamation-triangle-fill"></i>
+        <span>Invalid email or password. Try again.</span>
+    </div>
+
+    <div th:if="${param.logout}" class="alert alert-custom alert-success mb-4">
+        <i class="bi bi-check-circle-fill"></i>
+        <span>You have been successfully logged out.</span>
+    </div>
+
+    <form th:action="@{/login}" method="post">
+        <div class="mb-3">
+            <label for="username" class="form-label">Email Address</label>
+            <div class="input-group">
+                    <span class="input-group-text" style="background-color: var(--bg-primary); border-color: #444; color: #888;">
+                        <i class="bi bi-envelope"></i>
+                    </span>
+                <input type="email" id="username" name="username" class="form-control" placeholder="john@example.com" required autofocus>
+            </div>
+        </div>
+
+        <div class="mb-4">
+            <label for="password" class="form-label">Password</label>
+            <div class="input-group">
+                    <span class="input-group-text" style="background-color: var(--bg-primary); border-color: #444; color: #888;">
+                        <i class="bi bi-lock"></i>
+                    </span>
+                <input type="password" id="password" name="password" class="form-control" placeholder="••••••••" required>
+            </div>
+        </div>
+
+        <button type="submit" class="btn btn-login">
+            LOGIN
+        </button>
+    </form>
+
+    <div class="register-link">
+        Don't have an account yet? <a href="/register">Register here</a>
+    </div>
+</div>
+
 </body>
 </html>

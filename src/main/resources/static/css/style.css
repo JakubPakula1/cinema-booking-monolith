@@ -543,7 +543,6 @@ footer a:hover {
     box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
 }
 
-/* Label Styling */
 .form-label {
     color: var(--lavender-grey);
     font-weight: 600;
@@ -553,7 +552,6 @@ footer a:hover {
     letter-spacing: 0.5px;
 }
 
-/* Input & Select Styling */
 .form-control,
 .form-select,
 .input-group-text {
@@ -580,19 +578,17 @@ input[type="datetime-local"] {
     color-scheme: dark;
 }
 
-/* Form Helper Text */
 .form-text {
     color: rgba(141, 153, 174, 0.6) !important;
     font-size: 0.8rem;
     margin-top: 8px;
 }
 
-/* Conflict List Styling */
+
 #conflictsSection .list-group-item {
     border-color: rgba(255,255,255,0.1);
 }
 
-/* Date Navigation Buttons */
 .date-btn {
     min-width: 80px;
     border-color: rgba(255,255,255,0.1);
@@ -607,7 +603,6 @@ input[type="datetime-local"] {
     transform: translateY(-2px);
 }
 
-/* Movie Row Card (Horizontal Layout) */
 .movie-row-card {
     background-color: rgba(43, 45, 66, 0.4);
     border: 1px solid rgba(255,255,255,0.05);
@@ -619,7 +614,6 @@ input[type="datetime-local"] {
     background-color: rgba(43, 45, 66, 0.7);
 }
 
-/* Time Buttons */
 .time-btn {
     border-radius: 20px;
     padding: 5px 15px;
@@ -629,20 +623,18 @@ input[type="datetime-local"] {
    10. SEAT SELECTION
    ========================================= */
 
-/* Kontener sali */
 .cinema-room-container {
-    perspective: 1000px; /* Daje efekt 3D dla ekranu */
+    perspective: 1000px;
     max-width: 800px;
     margin: 0 auto;
-    padding-bottom: 100px; /* Miejsce na sticky footer */
+    padding-bottom: 100px;
 }
 
-/* EKRAN KINOWY */
 .screen-container {
     margin-bottom: 60px;
     text-align: center;
     position: relative;
-    transform: rotateX(-5deg); /* Lekkie pochylenie ekranu */
+    transform: rotateX(-5deg);
 }
 
 .screen {
@@ -650,14 +642,14 @@ input[type="datetime-local"] {
     width: 100%;
     background: #fff;
     border-radius: 10px;
-    box-shadow: 0 20px 50px rgba(255, 255, 255, 0.4); /* Glow */
+    box-shadow: 0 20px 50px rgba(255, 255, 255, 0.4);
     opacity: 0.8;
     line-height: 60px;
     letter-spacing: 10px;
     color: #000;
     font-weight: bold;
     font-size: 0.8rem;
-    transform: scaleX(0.9); /* Trapezoid effect visual trick */
+    transform: scaleX(0.9);
 }
 
 .screen-glow {
@@ -671,7 +663,6 @@ input[type="datetime-local"] {
     z-index: -1;
 }
 
-/* LEGENDA */
 .seat-legend span {
     color: var(--text-secondary);
     font-size: 0.9rem;
@@ -687,16 +678,13 @@ input[type="datetime-local"] {
 .seat-demo.taken { background-color: #1a1b26; opacity: 0.3; cursor: not-allowed; }
 
 
-/* SIATKA FOTELI */
 .seats-grid {
     display: grid;
-    /* Zakładam 10 miejsc w rzędzie. Zmień zależnie od logiki sali */
     grid-template-columns: repeat(10, 1fr);
-    gap: 15px 10px; /* Rzędy x Kolumny */
+    gap: 15px 10px;
     justify-content: center;
 }
 
-/* POJEDYNCZY FOTEL */
 .seat-wrapper {
     position: relative;
     height: 45px;
@@ -709,11 +697,9 @@ input[type="datetime-local"] {
     transform: scale(1.1);
 }
 
-/* Kształt fotela */
 .seat-shape {
     height: 35px;
     width: 100%;
-    /* ZMIANA: Zaokrąglamy dół (oparcie), a górę (przód) zostawiamy bardziej prostą */
     border-radius: 5px 5px 12px 12px;
 
     display: flex;
@@ -725,59 +711,49 @@ input[type="datetime-local"] {
     z-index: 2;
     transition: all 0.3s ease;
 
-    /* Opcjonalnie: dodaj cień wewnątrz, żeby oparcie na dole wydawało się wypukłe */
     box-shadow: inset 0 -3px 5px rgba(0,0,0,0.2);
 }
 
 /* Podłokietniki */
 .seat-armrest {
     position: absolute;
-    /* ZMIANA: Zamiast 'bottom: 0', dajemy 'top: 5px' -> przesuwamy je w stronę ekranu */
     top: -10px;
-
     width: 8px;
-    height: 22px; /* Trochę dłuższe, żeby objęły uda widza */
+    height: 22px;
     background-color: inherit;
     border-radius: 4px;
     z-index: 1;
 }
 
-/* Dostosowanie pozycji bocznej (bez zmian, ale dla pewności wklejam) */
 .seat-armrest.left { left: -2px; }
 .seat-armrest.right { right: -2px; }
 
 
-/* KOLORY FOTELI (STANY) */
-
-/* 1. Wolne */
 .seat-wrapper.available .seat-shape,
 .seat-wrapper.available .seat-armrest {
-    background-color: #3d405b; /* Ciemny szary */
+    background-color: #3d405b;
     border: 1px solid rgba(255,255,255,0.1);
 }
 
-/* 2. Wybrane (Moje) */
 .seat-wrapper.selected .seat-shape,
 .seat-wrapper.selected .seat-armrest {
-    background-color: var(--accent-primary); /* Czerwony */
+    background-color: var(--accent-primary);
     box-shadow: 0 0 15px rgba(239, 35, 60, 0.4);
     border: none;
 }
 
-/* 3. Zajęte (Inni) */
 .seat-wrapper.taken {
-    pointer-events: none; /* Nieklikalne */
+    pointer-events: none;
 }
 .seat-wrapper.taken .seat-shape,
 .seat-wrapper.taken .seat-armrest {
-    background-color: #16171f; /* Prawie czarny */
+    background-color: #16171f;
     opacity: 0.5;
 }
 .seat-wrapper.taken .seat-number {
-    display: none; /* Ukryj numer na zajętych */
+    display: none;
 }
 .seat-wrapper.taken::after {
-    /* "X" na zajętym miejscu */
     content: '×';
     position: absolute;
     top: 50%; left: 50%;
@@ -812,12 +788,12 @@ input[type="datetime-local"] {
     border-radius: 12px;
 }
 
-/* Ikona miejsca w liście */
+
 .seat-icon-small {
     width: 40px; height: 40px;
     background-color: var(--accent-primary);
     color: white;
-    border-radius: 8px 8px 4px 4px; /* Kształt fotela */
+    border-radius: 8px 8px 4px 4px;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -826,7 +802,7 @@ input[type="datetime-local"] {
     box-shadow: 0 4px 10px rgba(239, 35, 60, 0.3);
 }
 
-/* Karta Paragonu (Receipt) */
+
 .booking-receipt-card {
     border-radius: 16px;
     overflow: hidden;
@@ -851,5 +827,52 @@ input[type="datetime-local"] {
 }
 
 .receipt-body {
-    background-color: #2b2d42; /* Pełny kolor, nie przezroczysty, dla czytelności */
+    background-color: #2b2d42;
+}
+
+/* =========================================
+   12. PROFILE PAGE
+   ========================================= */
+.accordion-item {
+    background-color: var(--bg-surface);
+    border: 1px solid var(--space-indigo);
+    color: var(--text-primary);
+}
+
+.accordion-button {
+    background-color: var(--bg-primary);
+    color: var(--text-primary);
+    box-shadow: none;
+}
+
+.accordion-button:not(.collapsed) {
+    background-color: var(--accent-primary);
+    color: var(--platinum);
+    font-weight: bold;
+}
+
+.accordion-button::after {
+    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' fill='%23edf2f4'%3e%3cpath fill-rule='evenodd' d='M1.646 4.646a.5.5 0 0 1 .708 0L8 10.293l5.646-5.647a.5.5 0 0 1 .708.708l-6 6a.5.5 0 0 1-.708 0l-6-6a.5.5 0 0 1 0-.708z'/%3e%3c/svg%3e");
+}
+.accordion-button:not(.collapsed)::after {
+    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' fill='%23edf2f4'%3e%3cpath fill-rule='evenodd' d='M1.646 4.646a.5.5 0 0 1 .708 0L8 10.293l5.646-5.647a.5.5 0 0 1 .708.708l-6 6a.5.5 0 0 1-.708 0l-6-6a.5.5 0 0 1 0-.708z'/%3e%3c/svg%3e");
+    transform: rotate(-180deg);
+}
+
+.accordion-body {
+    background-color: var(--bg-surface);
+    border-top: 1px solid var(--lavender-grey);
+}
+
+
+.profile-header-card {
+    background: linear-gradient(135deg, var(--bg-primary) 0%, var(--bg-surface) 100%);
+    border-left: 5px solid var(--accent-primary);
+}
+
+.text-accent {
+    color: var(--accent-primary) !important;
+}
+.text-lavender {
+    color: var(--text-secondary) !important;
 }

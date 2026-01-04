@@ -21,7 +21,7 @@ public class SecurityConfig {
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/", "/register", "/login", "/css/**", "/js/**", "/images/**").permitAll()
+                        .requestMatchers("/", "/register", "/login", "/css/**", "/js/**", "/images/**","/uploads/**").permitAll()
                         .requestMatchers("/admin/**", "/screenings/admin/**").hasRole("ADMIN")
                         .requestMatchers("/v3/api-docs/**", "/swagger-ui/**", "/swagger-ui.html").permitAll()
                         .anyRequest().authenticated()
@@ -33,7 +33,10 @@ public class SecurityConfig {
                         .permitAll()
                 )
                 .logout(logout -> logout
+                        .logoutUrl("/logout")
                         .logoutSuccessUrl("/login?logout")
+                        .invalidateHttpSession(true)
+                        .deleteCookies("JSESSIONID")
                         .permitAll()
                 )
                 .csrf(csrf -> csrf
