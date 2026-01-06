@@ -12,6 +12,8 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.nio.file.AccessDeniedException;
+import java.security.Principal;
 import java.util.List;
 
 @RestController
@@ -22,8 +24,8 @@ public class TicketRestController {
     private final TicketService ticketService;
 
     @GetMapping("/{orderId}/pdf")
-    public ResponseEntity<byte[]> downloadTicketsPdf(@PathVariable Long orderId) {
-        List<Ticket> tickets = ticketService.getTicketsByOrderId(orderId);
+    public ResponseEntity<byte[]> downloadTicketsPdf(@PathVariable Long orderId, Principal principal) throws AccessDeniedException {
+        List<Ticket> tickets = ticketService.getTicketsByOrderId(orderId, principal.getName());
 
         byte[] pdfBytes = pdfService.generateTicketPdf(tickets);
 
