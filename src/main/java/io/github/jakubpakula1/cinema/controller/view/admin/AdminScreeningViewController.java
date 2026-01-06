@@ -1,6 +1,7 @@
 package io.github.jakubpakula1.cinema.controller.view.admin;
 
 import io.github.jakubpakula1.cinema.dto.screening.ScreeningDTO;
+import io.github.jakubpakula1.cinema.dto.screening.ScreeningListDTO;
 import io.github.jakubpakula1.cinema.exception.ScreeningDateInPastException;
 import io.github.jakubpakula1.cinema.exception.ScreeningOverlapException;
 import io.github.jakubpakula1.cinema.service.MovieService;
@@ -11,6 +12,8 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @Controller
 @RequestMapping("/admin/screenings")
 @RequiredArgsConstructor
@@ -18,6 +21,13 @@ public class AdminScreeningViewController {
     private final ScreeningService screeningService;
     private final MovieService movieService;
     private final RoomService roomService;
+
+    @GetMapping()
+    public String getAllScreenings(Model model) {
+        List<ScreeningListDTO> screenings = screeningService.getAllScreeningsForList();
+        model.addAttribute("screenings", screenings);
+        return "screening/admin/list";
+    }
 
     @GetMapping("/add")
     public String showScreeningForm(Model model) {

@@ -2,7 +2,6 @@ package io.github.jakubpakula1.cinema.controller.view;
 
 import io.github.jakubpakula1.cinema.dto.booking.BookingRequestDTO;
 import io.github.jakubpakula1.cinema.dto.booking.BookingSummaryDTO;
-import io.github.jakubpakula1.cinema.dto.screening.ScreeningListDTO;
 import io.github.jakubpakula1.cinema.exception.EmptyCartException;
 import io.github.jakubpakula1.cinema.exception.ReservationExpiredException;
 import io.github.jakubpakula1.cinema.model.Order;
@@ -20,7 +19,6 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.nio.file.AccessDeniedException;
 import java.security.Principal;
-import java.util.List;
 
 @Controller
 @RequestMapping("/screenings")
@@ -31,12 +29,6 @@ public class ScreeningViewController {
     private final BookingService bookingService;
     private final UserService userService;
 
-    @GetMapping()
-    public String getAllScreenings(Model model) {
-        List<ScreeningListDTO> screenings = screeningService.getAllScreeningsForList();
-        model.addAttribute("screenings", screenings);
-        return "screening/admin/list";
-    }
 
     @GetMapping("/booking/{screeningId}")
     public String showRoom(@PathVariable Long screeningId, Model model) {

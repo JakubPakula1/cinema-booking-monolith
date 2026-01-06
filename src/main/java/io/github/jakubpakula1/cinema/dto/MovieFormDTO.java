@@ -54,5 +54,6 @@ public class MovieFormDTO {
     //External URLs
     private String trailerYoutubeUrl;
 
-
+    private String posterFileName;
+    private String backdropFileName;
 }

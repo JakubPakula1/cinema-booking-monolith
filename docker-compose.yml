@@ -1,13 +1,33 @@
-version: '3.8'
-
 services:
-  postgres:
-    image: postgres:15-alpine
-    container_name: cinema-booking-db
+  app:
+    build: .
+    container_name: cinema-app
+    ports:
+      - "8080:8080"
     environment:
-      POSTGRES_DB: cinema_booking
-      POSTGRES_USER: cinema_user
-      POSTGRES_PASSWORD: cinema_password
+      - TZ=Europe/Warsaw
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://db:5432/cinema_booking
+      - SPRING_DATASOURCE_USERNAME=cinema_user
+      - SPRING_DATASOURCE_PASSWORD=cinema_password
+
+      - CINEMA_UPLOAD_DIR=/app/uploads
+
+      - MAIL_USERNAME=${MAIL_USERNAME}
+      - MAIL_PASSWORD=${MAIL_PASSWORD}
+
+    volumes:
+      - ./uploads:/app/uploads
+    depends_on:
+      - db
+
+  db:
+    image: postgres:15-alpine
+    container_name: cinema-db
+    environment:
+      - TZ=Europe/Warsaw
+      - POSTGRES_DB=cinema_booking
+      - POSTGRES_USER=cinema_user
+      - POSTGRES_PASSWORD=cinema_password
     ports:
       - "5432:5432"
     volumes:

@@ -4,17 +4,23 @@
       layout:decorate="~{layout}"
       lang="en">
 <head>
-    <title>Add Movie - Cinema App</title>
+    <title th:text="${movieFormDTO.id == null ? 'Add New Movie' : 'Edit Movie'}">Movie Form</title>
 </head>
 <body>
 <main layout:fragment="content">
     <div class="row justify-content-center mt-5">
         <div class="col-md-8">
-            <h1 class="mb-4">Add New Movie</h1>
+            <h1 class="mb-4" th:text="${movieFormDTO.id == null ? 'Add New Movie' : 'Edit Movie (' + movieFormDTO.title + ')'}">Form</h1>
 
-            <form th:action="@{/admin/movies/add}" th:object="${movieFormDTO}" method="post" enctype="multipart/form-data" novalidate class="needs-validation">
+            <form th:action="${movieFormDTO.id == null} ? @{/admin/movies/add} : @{/admin/movies/edit/{id}(id=${movieFormDTO.id})}"
+                  th:object="${movieFormDTO}"
+                  th:method="${movieFormDTO.id == null} ? 'post' : 'put'"
+                  enctype="multipart/form-data"
+                  novalidate
+                  class="needs-validation">
 
-                <!-- Basic Details Section -->
+                <input type="hidden" th:field="*{id}" />
+
                 <fieldset class="border p-3 mb-4">
                     <legend class="w-auto px-2 fs-5">Basic Details</legend>
 
@@ -35,7 +41,9 @@
                             <label for="genre" class="form-label">Genre <span class="text-danger">*</span></label>
                             <select class="form-select" id="genre" th:field="*{genre}" th:errorclass="is-invalid" required>
                                 <option value="">Select genre</option>
-                                <option th:each="genre : ${T(io.github.jakubpakula1.cinema.enums.MovieGenre).values()}" th:value="${genre}" th:text="${genre.displayName}"></option>
+                                <option th:each="genre : ${T(io.github.jakubpakula1.cinema.enums.MovieGenre).values()}"
+                                        th:value="${genre}"
+                                        th:text="${genre.displayName}"></option>
                             </select>
                             <div class="invalid-feedback" th:if="${#fields.hasErrors('genre')}" th:errors="*{genre}"></div>
                         </div>
@@ -48,7 +56,6 @@
                     </div>
                 </fieldset>
 
-                <!-- Meta Information Section -->
                 <fieldset class="border p-3 mb-4">
                     <legend class="w-auto px-2 fs-5">Meta Information</legend>
 
@@ -86,22 +93,41 @@
                     </div>
                 </fieldset>
 
-                <!-- Media Section -->
                 <fieldset class="border p-3 mb-4">
                     <legend class="w-auto px-2 fs-5">Media</legend>
 
                     <div class="mb-3">
-                        <label for="posterImageFile" class="form-label">Poster Image <span class="text-danger">*</span></label>
-                        <input type="file" class="form-control" id="posterImageFile" th:field="*{posterImageFile}" accept="image/*" th:errorclass="is-invalid" required>
+                        <label for="posterImageFile" class="form-label">Poster Image
+                            <span class="text-danger" th:if="${movieFormDTO.id == null}">*</span>
+                        </label>
+                        <input type="file" class="form-control" id="posterImageFile" th:field="*{posterImageFile}"
+                               accept="image/*" th:errorclass="is-invalid"
+                               th:required="${movieFormDTO.id == null}">
+
                         <div class="invalid-feedback" th:if="${#fields.hasErrors('posterImageFile')}" th:errors="*{posterImageFile}"></div>
-                        <small class="form-text text-muted">Upload poster image for the movie</small>
+
+                        <div th:if="${movieFormDTO.id != null and movieFormDTO.posterFileName != null}" class="mt-2">
+                            <small>Current Poster:</small><br>
+                            <img th:src="@{/uploads/{filename}(filename=${movieFormDTO.posterFileName})}"
+                                 alt="Current Poster" style="height: 100px; border: 1px solid #ddd; padding: 2px;">
+                        </div>
                     </div>
 
                     <div class="mb-3">
-                        <label for="backdropImageFile" class="form-label">Backdrop Image <span class="text-danger">*</span></label>
-                        <input type="file" class="form-control" id="backdropImageFile" th:field="*{backdropImageFile}" accept="image/*" th:errorclass="is-invalid" required>
+                        <label for="backdropImageFile" class="form-label">Backdrop Image
+                            <span class="text-danger" th:if="${movieFormDTO.id == null}">*</span>
+                        </label>
+                        <input type="file" class="form-control" id="backdropImageFile" th:field="*{backdropImageFile}"
+                               accept="image/*" th:errorclass="is-invalid"
+                               th:required="${movieFormDTO.id == null}">
+
                         <div class="invalid-feedback" th:if="${#fields.hasErrors('backdropImageFile')}" th:errors="*{backdropImageFile}"></div>
-                        <small class="form-text text-muted">Upload backdrop/banner image for the movie</small>
+
+                        <div th:if="${movieFormDTO.id != null and movieFormDTO.backdropFileName != null}" class="mt-2">
+                            <small>Current Backdrop:</small><br>
+                            <img th:src="@{/uploads/{filename}(filename=${movieFormDTO.backdropFileName})}"
+                                 alt="Current Backdrop" style="height: 60px; border: 1px solid #ddd; padding: 2px;">
+                        </div>
                     </div>
 
                     <div class="mb-3">
@@ -113,19 +139,19 @@
                     <div class="mb-3">
                         <label for="trailerYoutubeUrl" class="form-label">Trailer YouTube URL</label>
                         <input type="url" class="form-control" id="trailerYoutubeUrl" th:field="*{trailerYoutubeUrl}" placeholder="https://www.youtube.com/watch?v=...">
-                        <small class="form-text text-muted">Provide YouTube trailer URL (optional)</small>
                     </div>
                 </fieldset>
 
-                <!-- Form Actions -->
                 <div class="d-flex gap-2 justify-content-end">
-                    <a href="/admin/" class="btn btn-secondary">Cancel</a>
-                    <button type="submit" class="btn btn-primary">Add Movie</button>
+                    <a th:href="@{/admin/movies}" class="btn btn-secondary">Cancel</a>
+                    <button type="submit" class="btn btn-primary"
+                            th:text="${movieFormDTO.id == null ? 'Add Movie' : 'Save Changes'}">
+                        Add Movie
+                    </button>
                 </div>
             </form>
         </div>
     </div>
-
 </main>
 </body>
 </html>

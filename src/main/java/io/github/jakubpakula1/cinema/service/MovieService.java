@@ -44,6 +44,9 @@ public class MovieService {
         return movieRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Movie not found"));
     }
 
+    public MovieFormDTO getMovieFormDTOById(Long id) {
+        return convertMovieToFormDTO(getMovieById(id));
+    }
     public List<MovieCarouselDTO> getLatestMovies(int count) {
         return movieRepository.findLatestMoviesForCarousel(PageRequest.of(0, count));
 
@@ -159,5 +162,24 @@ public class MovieService {
             }
         }
     }
+
+    private MovieFormDTO convertMovieToFormDTO(Movie movie) {
+        MovieFormDTO movieFormDTO = new MovieFormDTO();
+        movieFormDTO.setId(movie.getId());
+        movieFormDTO.setTitle(movie.getTitle());
+        movieFormDTO.setDescription(movie.getDescription());
+        movieFormDTO.setGenre(movie.getGenre());
+        movieFormDTO.setDurationInMinutes(movie.getDurationInMinutes());
+        movieFormDTO.setDirector(movie.getDirector());
+        movieFormDTO.setCast(movie.getCast());
+        movieFormDTO.setReleaseYear(movie.getReleaseYear());
+        movieFormDTO.setProductionCountry(movie.getProductionCountry());
+        movieFormDTO.setAgeRestriction(movie.getAgeRestriction());
+        movieFormDTO.setTrailerYoutubeUrl(movie.getTrailerYoutubeUrl());
+        movieFormDTO.setPosterFileName(movie.getPosterFileName());
+        movieFormDTO.setBackdropFileName(movie.getBackdropFileName());
+        return movieFormDTO;
+    }
+
 
 }
