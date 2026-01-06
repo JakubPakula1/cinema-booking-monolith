@@ -81,15 +81,25 @@ public class ScreeningService {
 
     @Transactional
     public void createScreening(ScreeningDTO screeningDTO) {
+        log.info("Creating screening at: {} for movie ID: {}, room ID: {}",
+                screeningDTO.getScreeningTime(), screeningDTO.getMovieId(), screeningDTO.getRoomId());
 
         if (screeningDTO.getScreeningTime().isBefore(LocalDateTime.now())) {
+            log.warn("Cannot create screening with past date: {}", screeningDTO.getScreeningTime());
             throw new ScreeningDateInPastException();
         }
 
-        Room room = roomRepository.findById(screeningDTO.getRoomId()).orElseThrow(() -> new ResourceNotFoundException("Room Not Found"));
+        Room room = roomRepository.findById(screeningDTO.getRoomId())
+                .orElseThrow(() -> {
+                    log.error("Room not found with ID: {}", screeningDTO.getRoomId());
+                    return new ResourceNotFoundException("Room Not Found");
+                });
 
         Movie movie = movieRepository.findById(screeningDTO.getMovieId())
-                .orElseThrow(() -> new ResourceNotFoundException("Invalid movie ID: " + screeningDTO.getMovieId()));
+                .orElseThrow(() -> {
+                    log.error("Movie not found with ID: {}", screeningDTO.getMovieId());
+                    return new ResourceNotFoundException("Invalid movie ID: " + screeningDTO.getMovieId());
+                });
 
         LocalDateTime endTime = screeningDTO.getScreeningTime().plusMinutes(movie.getDurationInMinutes());
 
@@ -100,6 +110,7 @@ public class ScreeningService {
         );
 
         if(isOverlapping) {
+            log.warn("Screening overlaps with existing screening in room: {}", screeningDTO.getRoomId());
             throw new ScreeningOverlapException("Screening overlaps with an existing screening in the same room.");
         }
 
@@ -110,20 +121,35 @@ public class ScreeningService {
         screening.setEndTime(endTime);
 
         screeningRepository.save(screening);
+        log.info("Screening created successfully with ID: {}", screening.getId());
     }
 
     @Transactional
     public void updateScreening(Long screeningId, ScreeningDTO screeningDTO) {
+        log.info("Updating screening ID: {} with new time: {}", screeningId, screeningDTO.getScreeningTime());
+
         Screening existingScreening = screeningRepository.findById(screeningId)
-                .orElseThrow(() -> new ResourceNotFoundException("Screening not found with id: " + screeningId));
+                .orElseThrow(() -> {
+                    log.error("Screening not found for update with ID: {}", screeningId);
+                    return new ResourceNotFoundException("Screening not found with id: " + screeningId);
+                });
+
         if (screeningDTO.getScreeningTime().isBefore(LocalDateTime.now())) {
+            log.warn("Cannot update screening to past date: {}", screeningDTO.getScreeningTime());
             throw new ScreeningDateInPastException();
         }
+
         Room room = roomRepository.findById(screeningDTO.getRoomId())
-                .orElseThrow(() -> new ResourceNotFoundException("Room Not Found"));
+                .orElseThrow(() -> {
+                    log.error("Room not found with ID: {}", screeningDTO.getRoomId());
+                    return new ResourceNotFoundException("Room Not Found");
+                });
 
         Movie movie = movieRepository.findById(screeningDTO.getMovieId())
-                .orElseThrow(() -> new ResourceNotFoundException("Invalid movie ID: " + screeningDTO.getMovieId()));
+                .orElseThrow(() -> {
+                    log.error("Movie not found with ID: {}", screeningDTO.getMovieId());
+                    return new ResourceNotFoundException("Invalid movie ID: " + screeningDTO.getMovieId());
+                });
 
         LocalDateTime endTime = screeningDTO.getScreeningTime().plusMinutes(movie.getDurationInMinutes());
 
@@ -135,20 +161,30 @@ public class ScreeningService {
         );
 
         if(isOverlapping) {
+            log.warn("Updated screening would overlap in room: {}", screeningDTO.getRoomId());
             throw new ScreeningOverlapException("Screening overlaps with an existing screening in the same room.");
         }
+
         existingScreening.setMovie(movie);
         existingScreening.setRoom(room);
         existingScreening.setStartTime(screeningDTO.getScreeningTime());
         existingScreening.setEndTime(endTime);
         screeningRepository.save(existingScreening);
+        log.info("Screening ID: {} updated successfully", screeningId);
     }
 
     @Transactional
     public void deleteScreening(Long screeningId) {
+        log.info("Deleting screening with ID: {}", screeningId);
+
         Screening screening = screeningRepository.findById(screeningId)
-                .orElseThrow(() -> new ResourceNotFoundException("Screening not found with id: " + screeningId));
+                .orElseThrow(() -> {
+                    log.error("Screening not found for deletion with ID: {}", screeningId);
+                    return new ResourceNotFoundException("Screening not found with id: " + screeningId);
+                });
+
         screeningRepository.delete(screening);
+        log.info("Screening ID: {} deleted successfully", screeningId);
     }
 
     @Transactional(readOnly = true)
@@ -190,8 +226,6 @@ public class ScreeningService {
         List<Seat> allSeats = seatRepository.findAllByRoomId(room.getId());
 
         Set<Long> soldSeatIds = new HashSet<>(ticketRepository.findSoldSeatIdsByScreeningId(screeningId));
-        log.info("===========================================================");
-        log.info(soldSeatIds.toString());
         List<SeatUserLockDTO> lockedSeats = temporaryReservationRepository.findLockedSeatIdsByScreeningId(screeningId);
         Map<Long, SeatUserLockDTO> locksMap = lockedSeats.stream()
                 .collect(Collectors.toMap(SeatUserLockDTO::getSeatId, lock -> lock));
@@ -219,7 +253,7 @@ public class ScreeningService {
                             .build();
                 })
                 .sorted(Comparator.comparing(SeatStatusDTO::getRowNumber)
-                        .thenComparing(SeatStatusDTO::getSeatNumber)) // Warto sortować też po numerze w rzędzie
+                        .thenComparing(SeatStatusDTO::getSeatNumber))
                 .toList();
 
     }

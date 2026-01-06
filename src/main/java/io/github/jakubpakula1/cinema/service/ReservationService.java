@@ -8,6 +8,7 @@ import io.github.jakubpakula1.cinema.exception.ResourceNotFoundException;
 import io.github.jakubpakula1.cinema.model.*;
 import io.github.jakubpakula1.cinema.repository.*;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -15,6 +16,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDateTime;
 import java.util.List;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class ReservationService {
@@ -27,10 +29,15 @@ public class ReservationService {
     @Value("${cinema.reservation-expiration-minutes}")
     private  int RESERVATION_TIME_MINUTES;
 
-     @Transactional
+    @Transactional
     public TemporaryReservation createTemporaryReservation(ReservationRequestDTO request, User user) {
+        log.info("Creating temporary reservation for user: {}, seatId: {}, screeningId: {}", user.getId(), request.getSeatId(), request.getScreeningId());
+
         Seat seat = seatRepository.findSeatWithLock(request.getSeatId())
-                .orElseThrow(() -> new ResourceNotFoundException("Seat not found"));
+                .orElseThrow(() -> {
+                    log.error("Seat not found with ID: {}", request.getSeatId());
+                    return new ResourceNotFoundException("Seat not found");
+                });
 
         boolean isTaken = temporaryReservationRepository.existsBySeatIdAndScreeningIdAndExpiresAtAfter(
                 seat.getId(),
@@ -42,9 +49,12 @@ public class ReservationService {
                 seat.getId(),
                 request.getScreeningId()
         );
+
         if (isTaken || isSold) {
+            log.warn("Seat {} is already reserved for screening {}", request.getSeatId(), request.getScreeningId());
             throw new IllegalStateException("Seat is already reserved");
         }
+
         LocalDateTime newExpirationTime = LocalDateTime.now().plusMinutes(RESERVATION_TIME_MINUTES);
         TemporaryReservation tempReservation = new TemporaryReservation();
         tempReservation.setSeat(seat);
@@ -53,28 +63,39 @@ public class ReservationService {
         tempReservation.setExpiresAt(newExpirationTime);
 
         temporaryReservationRepository.save(tempReservation);
+        log.debug("Temporary reservation created with ID: {}, expires at: {}", tempReservation.getId(), newExpirationTime);
 
         List<TemporaryReservation> userReservations = temporaryReservationRepository
                 .findAllByUserIdAndExpiresAtAfter(user.getId(), LocalDateTime.now());
+
+        log.debug("Updating expiration time for {} existing reservations", userReservations.size());
         for (TemporaryReservation reservation : userReservations) {
             if(!reservation.getId().equals(tempReservation.getId())){
                 reservation.setExpiresAt(newExpirationTime);
             }
         }
+
+        log.info("Reservation created successfully for user: {}", user.getId());
         return tempReservation;
     }
 
     @Transactional
     public void deleteTemporaryReservation(ReservationRequestDTO request, User user) {
+        log.info("Deleting temporary reservation for user: {}, seatId: {}, screeningId: {}", user.getId(), request.getSeatId(), request.getScreeningId());
+
         List<TemporaryReservation> reservations = temporaryReservationRepository.findByUserIdAndSeatIdAndScreeningId(
                 user.getId(),
                 request.getSeatId(),
                 request.getScreeningId()
         );
+
         if (reservations.isEmpty()) {
+            log.warn("Temporary reservation not found for user: {}, seatId: {}", user.getId(), request.getSeatId());
             throw new ResourceNotFoundException("Temporary reservation not found");
         }
+
         temporaryReservationRepository.deleteAll(reservations);
+        log.info("Deleted {} reservation(s) for user: {}", reservations.size(), user.getId());
     }
 
     @Transactional
