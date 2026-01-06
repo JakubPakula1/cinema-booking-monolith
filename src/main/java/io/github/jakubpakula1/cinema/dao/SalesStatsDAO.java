@@ -36,7 +36,17 @@ public class SalesStatsDAO {
         String sql = "INSERT INTO report_logs (username, accessed_at) VALUES (?, ?)";
         jdbcTemplate.update(sql, username, LocalDateTime.now());
     }
+    // --- WYMÓG: DELETE z update() (Metoda sprzątająca) ---
+    public int clearLogsOlderThan(int days) {
+        String sql = "DELETE FROM report_logs WHERE accessed_at < ?";
+        return jdbcTemplate.update(sql, LocalDateTime.now().minusDays(days));
+    }
 
+    // --- WYMÓG: UPDATE z update() (Np. anonimizacja usera w logach) ---
+    public void anonymizeLogsForUser(String username) {
+        String sql = "UPDATE report_logs SET username = 'ANONYMOUS' WHERE username = ?";
+        jdbcTemplate.update(sql, username);
+    }
     private static class SalesRowMapper implements RowMapper<DailySalesStatsDTO> {
         @Override
         public DailySalesStatsDTO mapRow(ResultSet rs, int rowNum) throws SQLException {

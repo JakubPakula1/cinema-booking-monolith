@@ -9,9 +9,9 @@ import io.github.jakubpakula1.cinema.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
+
+import java.security.Principal;
 
 @RestController
 @RequestMapping("/api/v1/reservations")
@@ -21,11 +21,11 @@ public class ReservationRestController {
     private final ReservationService reservationService;
 
     @PostMapping("/lock")
-    public ResponseEntity<ReservationResponseDTO> createReservation(@RequestBody ReservationRequestDTO request, @AuthenticationPrincipal UserDetails userDetails) {
-        if (userDetails == null) {
+    public ResponseEntity<ReservationResponseDTO> createReservation(@RequestBody ReservationRequestDTO request, Principal principal) {
+        if (principal == null) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }
-        User user = userService.getUserByEmail(userDetails.getUsername());
+        User user = userService.getUserByEmail(principal.getName());
 
         TemporaryReservation tempRes = reservationService.createTemporaryReservation(request, user);
 
@@ -40,11 +40,11 @@ public class ReservationRestController {
     }
 
     @DeleteMapping("/lock")
-    public ResponseEntity<?> cancelReservation(@RequestBody ReservationRequestDTO request, @AuthenticationPrincipal UserDetails userDetails) {
-        if (userDetails == null) {
+    public ResponseEntity<?> cancelReservation(@RequestBody ReservationRequestDTO request, Principal principal) {
+        if (principal == null) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }
-        User user = userService.getUserByEmail(userDetails.getUsername());
+        User user = userService.getUserByEmail(principal.getName());
 
         reservationService.deleteTemporaryReservation(request, user);
 

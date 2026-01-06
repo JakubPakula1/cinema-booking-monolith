@@ -8,14 +8,11 @@ import io.github.jakubpakula1.cinema.exception.ReservationExpiredException;
 import io.github.jakubpakula1.cinema.model.Order;
 import io.github.jakubpakula1.cinema.model.Screening;
 import io.github.jakubpakula1.cinema.model.User;
-import io.github.jakubpakula1.cinema.security.CustomUserDetails;
 import io.github.jakubpakula1.cinema.service.BookingService;
 import io.github.jakubpakula1.cinema.service.ReservationService;
 import io.github.jakubpakula1.cinema.service.ScreeningService;
 import io.github.jakubpakula1.cinema.service.UserService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -68,9 +65,9 @@ public class ScreeningViewController {
     }
 
     @PostMapping("booking/process")
-    public String processBooking(@ModelAttribute BookingRequestDTO form, @AuthenticationPrincipal CustomUserDetails userDetails, RedirectAttributes redirectAttributes) {
+    public String processBooking(@ModelAttribute BookingRequestDTO form, Principal principal, RedirectAttributes redirectAttributes) {
         try {
-            User user = userService.getUserByEmail(userDetails.getUsername());
+            User user = userService.getUserByEmail(principal.getName());
 
             Long orderId = bookingService.finalizeOrder(form, user);
 
@@ -85,8 +82,8 @@ public class ScreeningViewController {
     }
 
     @GetMapping("booking/success/{orderId}")
-    public String successPage(@PathVariable Long orderId, Model model, @AuthenticationPrincipal UserDetails userDetails) throws AccessDeniedException {
-        Order order = bookingService.getOrderSummary(orderId, userDetails.getUsername());
+    public String successPage(@PathVariable Long orderId, Model model, Principal principal) throws AccessDeniedException {
+        Order order = bookingService.getOrderSummary(orderId, principal.getName());
 
         model.addAttribute("order", order);
         return "screening/booking-success";

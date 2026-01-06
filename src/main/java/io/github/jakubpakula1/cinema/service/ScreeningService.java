@@ -27,15 +27,14 @@ public class ScreeningService {
     private final RoomRepository roomRepository;
     private final TicketRepository ticketRepository;
     private final TemporaryReservationRepository temporaryReservationRepository;
-
-    private final long cleaningDurationInMinutes;
+    @Value("${cinema.cleaning-duration-minutes}")
+    private long cleaningDurationInMinutes;
     private final SeatRepository seatRepository;
 
-    public  ScreeningService(ScreeningRepository screeningRepository, MovieRepository movieRepository, RoomRepository roomRepository, TicketRepository ticketRepository, TemporaryReservationRepository temporaryReservationRepository, @Value("${cinema.cleaning-duration-minutes}") long cleaningDurationInMinutes, SeatRepository seatRepository) {
+    public  ScreeningService(ScreeningRepository screeningRepository, MovieRepository movieRepository, RoomRepository roomRepository, TicketRepository ticketRepository, TemporaryReservationRepository temporaryReservationRepository, SeatRepository seatRepository) {
         this.screeningRepository = screeningRepository;
         this.movieRepository = movieRepository;
         this.roomRepository = roomRepository;
-        this.cleaningDurationInMinutes = cleaningDurationInMinutes;
         this.seatRepository = seatRepository;
         this.ticketRepository = ticketRepository;
         this.temporaryReservationRepository = temporaryReservationRepository;
