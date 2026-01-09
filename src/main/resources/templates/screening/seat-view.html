@@ -5,6 +5,30 @@
       lang="en">
 <head>
     <title>Seat selection</title>
+    <style>
+        .toast-notification {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background-color: #dc3545;
+            color: white;
+            padding: 15px 20px;
+            border-radius: 4px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+            z-index: 1000;
+            animation: slideIn 0.3s ease-in;
+        }
+        @keyframes slideIn {
+            from {
+                transform: translateX(400px);
+                opacity: 0;
+            }
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+    </style>
 </head>
 <body>
 
@@ -74,7 +98,19 @@
 <th:block layout:fragment="scripts">
     <script th:inline="javascript">
         const screeningId = [[${screeningId}]];
-        let timerInterval = null; // Zmienna globalna na interwał
+        let timerInterval = null;
+
+        function showToast(message) {
+            const toast = document.createElement('div');
+            toast.className = 'toast-notification';
+            toast.innerText = message;
+            document.body.appendChild(toast);
+
+            setTimeout(() => {
+                toast.style.animation = 'slideIn 0.3s ease-out reverse';
+                setTimeout(() => toast.remove(), 300);
+            }, 3000);
+        }
 
         async function toggleSeat(element) {
             if (element.classList.contains('taken') && !element.classList.contains('selected')) {
@@ -99,17 +135,14 @@
 
                 if (response.ok) {
                     if (isSelected) {
-                        // Usuwamy rezerwację
                         element.classList.remove('selected');
                         element.classList.add('available');
-                        element.removeAttribute('data-expires-at'); // Ważne: czyścimy datę
+                        element.removeAttribute('data-expires-at');
                     } else {
-                        // Dodajemy rezerwację
-                        const temRes = await response.json(); // Backend musi zwrócić JSON z "expiresAt"
+                        const temRes = await response.json();
                         const newExpirationTime = temRes.expiresAt;
                         element.classList.add('selected');
                         element.classList.remove('available');
-                        // Ustawiamy datę wygaśnięcia w atrybucie
                         element.setAttribute('data-expires-at', newExpirationTime);
 
                         const allSelectedSeats = document.querySelectorAll('.seat-wrapper.selected');
@@ -119,11 +152,10 @@
                     }
 
                     updateSummary();
-                    // ZMIANA 3: Przeliczamy timer po każdym kliknięciu
                     recalcGlobalTimer();
                 } else {
-                    alert('Someone else just took this seat!');
-                    location.reload();
+                    showToast('Someone else just took this seat!');
+                    setTimeout(() => location.reload(), 1500);
                 }
             } catch (e) {
                 console.error(e);
@@ -145,21 +177,14 @@
             }
         }
 
-        // --- NOWA LOGIKA TIMERA ---
-
         function recalcGlobalTimer() {
-            // 1. Znajdź wszystkie wybrane fotele, które mają datę ważności
             const selectedSeats = Array.from(document.querySelectorAll('.seat-wrapper.selected[data-expires-at]'));
 
-            // Jeśli nie ma foteli, wyłącz timer i ukryj go
             if (selectedSeats.length === 0) {
                 stopTimer();
                 document.getElementById('timer-container').style.display = 'none';
                 return;
             }
-
-            // 2. Znajdź NAJBLIŻSZĄ datę wygaśnięcia (najmniejszy timestamp)
-            // Użytkownika interesuje, kiedy straci PIERWSZE miejsce.
             let minExpirationTime = Infinity;
 
             selectedSeats.forEach(seat => {
@@ -171,31 +196,25 @@
                     }
                 }
             });
-
-            // 3. Uruchom odliczanie do tej konkretnej daty
             startGlobalTimer(minExpirationTime);
         }
 
         function startGlobalTimer(targetTimeMs) {
-            // Czyścimy stary interwał, żeby nie mieć dwóch liczników
             stopTimer();
             document.getElementById('timer-container').style.display = 'block';
 
-            // Funkcja aktualizująca UI
             const updateUI = () => {
                 const now = new Date().getTime();
                 const diff = targetTimeMs - now;
 
                 if (diff <= 0) {
-                    // Czas minął!
                     document.getElementById('global-timer').innerText = "00:00";
                     stopTimer();
                     alert("Czas na rezerwację minął!");
-                    location.reload(); // Odświeżamy stronę, żeby zresetować stan
+                    location.reload();
                     return;
                 }
 
-                // Formatowanie MM:SS
                 const minutes = Math.floor(diff / 1000 / 60);
                 const seconds = Math.floor((diff / 1000) % 60);
 
@@ -204,7 +223,6 @@
 
                 document.getElementById('global-timer').innerText = `${minStr}:${secStr}`;
 
-                // Opcjonalnie: Zmień kolor na czerwony, gdy < 60 sekund
                 const timerText = document.getElementById('global-timer');
                 if (diff < 60000) {
                     timerText.classList.add('text-danger');
@@ -215,7 +233,6 @@
                 }
             };
 
-            // Wywołaj raz natychmiast, potem co sekundę
             updateUI();
             timerInterval = setInterval(updateUI, 1000);
         }
@@ -227,7 +244,6 @@
             }
         }
 
-        // Start przy ładowaniu strony (ważne przy odświeżaniu F5)
         document.addEventListener('DOMContentLoaded', () => {
             updateSummary();
             recalcGlobalTimer();
