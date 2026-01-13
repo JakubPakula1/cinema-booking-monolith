@@ -1,0 +1,2 @@
+-- This file is intentionally empty or minimal
+-- Test data is created programmatically via entityManager in tests

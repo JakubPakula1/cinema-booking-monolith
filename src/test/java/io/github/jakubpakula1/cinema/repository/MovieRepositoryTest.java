@@ -14,16 +14,15 @@ import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-@DataJpaTest // 1. Konfiguruje tylko warstwę JPA i bazę H2
+@DataJpaTest
 class MovieRepositoryTest {
 
     @Autowired
     private MovieRepository movieRepository;
 
     @Autowired
-    private TestEntityManager entityManager; // Pomocnik do wstawiania danych w testach
+    private TestEntityManager entityManager;
 
-    // --- TEST 1: CREATE (Zapis) ---
     @Test
     @DisplayName("Should save a movie and generate ID")
     void testSaveMovie() {
@@ -43,14 +42,12 @@ class MovieRepositoryTest {
                 .containsExactly(savedMovie.getId(), "Inception");
     }
 
-    // --- TEST 2: READ (Odczyt po ID) ---
     @Test
     @DisplayName("Should find movie by ID")
     void testFindMovieById() {
         // given
         Movie movie = new Movie();
         movie.setTitle("Avatar");
-        // Używamy entityManager.persistAndFlush, żeby mieć pewność, że trafiło do bazy przed testem repo
         Movie persisted = entityManager.persistAndFlush(movie);
 
         // when
@@ -64,7 +61,6 @@ class MovieRepositoryTest {
                 .isEqualTo("Avatar");
     }
 
-    // --- TEST 3: UPDATE (Aktualizacja) ---
     @Test
     @DisplayName("Should update movie title")
     void testUpdateMovie() {
@@ -87,7 +83,6 @@ class MovieRepositoryTest {
 
     }
 
-    // --- TEST 4: DELETE (Usuwanie) ---
     @Test
     @DisplayName("Should delete movie")
     void testDeleteMovie() {
@@ -104,7 +99,6 @@ class MovieRepositoryTest {
         assertThat(found).isEmpty();
     }
 
-    // --- TEST 5: CUSTOM QUERY (Projekcja DTO do Karuzeli) ---
     @Test
     @DisplayName("Should return MovieCarouselDTO list with limited description")
     void testFindLatestMoviesForCarousel() {
@@ -133,7 +127,6 @@ class MovieRepositoryTest {
         assertThat(result.getFirst()).isInstanceOf(MovieCarouselDTO.class);
     }
 
-    // --- TEST 6: READ (Brak wyniku) ---
     @Test
     void testFindByIdWhenNotExists() {
         Optional<Movie> found = movieRepository.findById(999L);

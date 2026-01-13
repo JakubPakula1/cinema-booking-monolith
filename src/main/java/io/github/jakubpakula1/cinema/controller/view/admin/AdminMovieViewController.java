@@ -34,10 +34,10 @@ public class AdminMovieViewController {
 
     @PostMapping("/add")
     public String handleAddMovieForm(@Valid @ModelAttribute MovieFormDTO movieFormDTO, BindingResult bindingResult) throws IOException {
-        if (movieFormDTO.getPosterImageFile().isEmpty()) {
+        if (movieFormDTO.getPosterImageFile() == null || movieFormDTO.getPosterImageFile().isEmpty()) {
             bindingResult.rejectValue("posterImageFile", "error.movieFormDTO", "Poster image is required when creating a movie.");
         }
-        if (movieFormDTO.getBackdropImageFile().isEmpty()) {
+        if (movieFormDTO.getBackdropImageFile() == null || movieFormDTO.getBackdropImageFile().isEmpty()) {
             bindingResult.rejectValue("backdropImageFile", "error.movieFormDTO", "Backdrop image is required when creating a movie.");
         }
         if (bindingResult.hasErrors()) {

@@ -27,13 +27,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.tuple;
 import static org.mockito.Mockito.*;
 
-/**
- * Unit tests for ScreeningService covering:
- * - CRUD operations (Create, Read, Update, Delete)
- * - Business logic validation (date validation, overlap detection)
- * - Data transformation (entities to DTOs)
- * - Exception handling
- */
+
 @ExtendWith(MockitoExtension.class)
 public class ScreeningServiceTest {
 

@@ -19,7 +19,6 @@ public class RepertoireViewController {
 
     @GetMapping()
     public String showRepertoire(@RequestParam(required = false) LocalDate date, Model model) {
-        // No date provided, use today's date
         if (date == null) {
             date = LocalDate.now();
         }
@@ -27,7 +26,6 @@ public class RepertoireViewController {
         List<RepertoireMovieDTO> movies = screeningService.getRepertoireForDate(date);
         model.addAttribute("movies", movies);
         model.addAttribute("selectedDate", date);
-        // Prepare next 7 days for date selection
         List<LocalDate> nextDays = new ArrayList<>();
         for (int i = 0; i < 7; i++) {
             nextDays.add(LocalDate.now().plusDays(i));

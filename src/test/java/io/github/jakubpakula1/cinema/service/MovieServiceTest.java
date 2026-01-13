@@ -1,6 +1,7 @@
 package io.github.jakubpakula1.cinema.service;
 
 import io.github.jakubpakula1.cinema.dto.MovieFormDTO;
+import io.github.jakubpakula1.cinema.enums.MovieGenre;
 import io.github.jakubpakula1.cinema.exception.ResourceNotFoundException;
 import io.github.jakubpakula1.cinema.model.Movie;
 import io.github.jakubpakula1.cinema.repository.MovieRepository;
@@ -261,4 +262,66 @@ class MovieServiceTest {
         assertThat(capturedPage.getPageNumber()).isEqualTo(2);
         assertThat(capturedPage.getPageSize()).isEqualTo(5);
     }
+    @Test
+    @DisplayName("Should convert movie to form DTO")
+    void testConvertMovieToFormDTO() {
+        when(movieRepository.findById(1L)).thenReturn(Optional.of(testMovie));
+
+        MovieFormDTO result = movieService.getMovieFormDTOById(1L);
+
+        assertThat(result)
+                .isNotNull()
+                .extracting("id", "title", "description", "durationInMinutes",
+                        "director", "cast", "releaseYear", "productionCountry",
+                        "ageRestriction", "trailerYoutubeUrl", "posterFileName", "backdropFileName")
+                .containsExactly(1L, "Test Movie", "Test Description", 120,
+                        "Test Director", "Test Cast", 2024, "USA", 13,
+                        "https://youtube.com/test", "poster_123.jpg", "backdrop_123.jpg");
+
+        verify(movieRepository).findById(1L);
+    }
+
+    @Test
+    @DisplayName("Should convert movie to form DTO with null file names")
+    void testConvertMovieToFormDTO_NullFileNames() {
+        Movie movieWithoutImages = Movie.builder()
+                .id(3L)
+                .title("No Images Movie")
+                .description("Movie without images")
+                .genre(MovieGenre.valueOf("COMEDY"))
+                .durationInMinutes(90)
+                .director("Test Director")
+                .cast("Test Cast")
+                .releaseYear(2021)
+                .productionCountry("UK")
+                .ageRestriction(6)
+                .trailerYoutubeUrl("https://youtube.com/test")
+                .posterFileName(null)
+                .backdropFileName(null)
+                .build();
+
+        when(movieRepository.findById(3L)).thenReturn(Optional.of(movieWithoutImages));
+
+        MovieFormDTO result = movieService.getMovieFormDTOById(3L);
+
+        assertThat(result)
+                .isNotNull()
+                .extracting("id", "title", "posterFileName", "backdropFileName")
+                .containsExactly(3L, "No Images Movie", null, null);
+
+        verify(movieRepository).findById(3L);
+    }
+
+    @Test
+    @DisplayName("Should throw ResourceNotFoundException when converting non-existent movie to DTO")
+    void testConvertMovieToFormDTO_NotFound() {
+        when(movieRepository.findById(999L)).thenReturn(Optional.empty());
+
+        assertThatThrownBy(() -> movieService.getMovieFormDTOById(999L))
+                .isInstanceOf(ResourceNotFoundException.class)
+                .hasMessage("Movie not found");
+
+        verify(movieRepository).findById(999L);
+    }
+
 }

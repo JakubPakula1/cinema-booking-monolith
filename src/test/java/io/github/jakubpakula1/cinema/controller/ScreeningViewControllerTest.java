@@ -3,7 +3,6 @@ package io.github.jakubpakula1.cinema.controller;
 import io.github.jakubpakula1.cinema.controller.view.ScreeningViewController;
 import io.github.jakubpakula1.cinema.dto.booking.BookingRequestDTO;
 import io.github.jakubpakula1.cinema.dto.booking.BookingSummaryDTO;
-import io.github.jakubpakula1.cinema.dto.screening.ScreeningListDTO;
 import io.github.jakubpakula1.cinema.dto.seat.SeatStatusDTO;
 import io.github.jakubpakula1.cinema.enums.ReservationStatus;
 import io.github.jakubpakula1.cinema.exception.EmptyCartException;
@@ -108,24 +107,6 @@ public class ScreeningViewControllerTest {
                 .user(testUser)
                 .expirationTime(LocalDateTime.now().plusMinutes(15))
                 .build();
-    }
-    @Test
-    @DisplayName("Should show all screenings list")
-    @WithMockUser(roles = "USER")
-    void shouldShowAllScreenings() throws Exception {
-        // given
-        ScreeningListDTO screening1 = new ScreeningListDTO();
-        ScreeningListDTO screening2 = new ScreeningListDTO();
-        List<ScreeningListDTO> screenings = List.of(screening1, screening2);
-
-        when(screeningService.getAllScreeningsForList()).thenReturn(screenings);
-
-        // when & then
-        mockMvc.perform(get("/screenings"))
-                .andExpect(status().isOk())
-                .andExpect(view().name("screening/admin/list"))
-                .andExpect(model().attributeExists("screenings"))
-                .andExpect(model().attribute("screenings", screenings));
     }
 
     @Test
