@@ -35,7 +35,7 @@ public class ArchitectureTest {
             .layer("Controller").definedBy("..controller..")
             .layer("Service").definedBy("..service..","..security..")
             .layer("Repository").definedBy("..repository..")
-            .whereLayer("Controller").mayNotBeAccessedByAnyLayer() // Nikt nie wstrzykuje kontrolera
-            .whereLayer("Service").mayOnlyBeAccessedByLayers("Controller") // Tylko kontroler gada z serwisem
-            .whereLayer("Repository").mayOnlyBeAccessedByLayers("Service"); // Kontroler NIE może gadać z repozytorium!
+            .whereLayer("Controller").mayNotBeAccessedByAnyLayer()
+            .whereLayer("Service").mayOnlyBeAccessedByLayers("Controller")
+            .whereLayer("Repository").mayOnlyBeAccessedByLayers("Service");
 }

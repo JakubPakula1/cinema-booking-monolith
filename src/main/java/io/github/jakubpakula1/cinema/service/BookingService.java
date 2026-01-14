@@ -116,7 +116,7 @@ public class BookingService {
         return order.getId();
     }
 
-    @Transactional
+    @Transactional(readOnly = true)
     public List<Order> getAllOrdersForUser(Long id) {
         return orderRepository.findAllByUserIdOrderByCreatedAtDesc(id);
     }

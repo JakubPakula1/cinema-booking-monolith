@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
@@ -31,26 +32,31 @@ public class MovieService {
         this.movieRepository = movieRepository;
         this.uploadDir = uploadDir;
     }
-
+    @Transactional(readOnly = true)
     public List<Movie> getAllMovies() {
         return movieRepository.findAll();
     }
-
+    @Transactional(readOnly = true)
     public Page<MovieListViewDTO> getAllMoviesProjected(int page, int size) {
         return movieRepository.findAllProjectedBy(PageRequest.of(page, size));
     }
-
+    @Transactional(readOnly = true)
     public Movie getMovieById(Long id) {
         return movieRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Movie not found"));
     }
 
+    @Transactional(readOnly = true)
     public MovieFormDTO getMovieFormDTOById(Long id) {
         return convertMovieToFormDTO(getMovieById(id));
     }
+
+    @Transactional(readOnly = true)
     public List<MovieCarouselDTO> getLatestMovies(int count) {
         return movieRepository.findLatestMoviesForCarousel(PageRequest.of(0, count));
 
     }
+
+    @Transactional
     public Movie addMovie(MovieFormDTO movieDTO) throws IOException{
         String savedPosterFileName = saveImage(movieDTO.getPosterImageFile());
         String savedBackdropFileName = saveImage(movieDTO.getBackdropImageFile());
@@ -77,6 +83,7 @@ public class MovieService {
         return movieRepository.save(newMovie);
     }
 
+    @Transactional
     public Movie updateMovie(Long id, MovieFormDTO movieDTO) throws IOException {
         Movie existingMovie = getMovieById(id);
 
@@ -112,6 +119,7 @@ public class MovieService {
         return movieRepository.save(existingMovie);
     }
 
+    @Transactional
     public Movie deleteMovie(Long id) throws IOException {
         Movie movieToDelete = getMovieById(id);
 

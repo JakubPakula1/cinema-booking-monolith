@@ -18,36 +18,32 @@ import java.util.List;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @DataJpaTest
-@Import(SalesStatsDAO.class) // <--- Importujemy nasze DAO ręcznie
+@Import(SalesStatsDAO.class)
 class SalesStatsDAOTest {
 
     @Autowired
     private SalesStatsDAO salesStatsDAO;
 
     @Autowired
-    private JdbcTemplate jdbcTemplate; // Do weryfikacji bezpośredniej w testach
+    private JdbcTemplate jdbcTemplate;
 
     @Autowired
     private TestEntityManager entityManager;
 
-    // --- TEST 7: SELECT z RowMapper (Raport) ---
     @Test
     @DisplayName("Should calculate daily sales stats correctly")
     void testGetDailySalesStats() {
-        // --- GIVEN (Przygotowanie środowiska) ---
+        // given
 
-        // 1. Potrzebujemy Usera do Zamówienia
         User user = new User();
         user.setEmail("test@test.pl");
         user.setPassword("pass");
         entityManager.persist(user);
 
-        // 2. Potrzebujemy Sali (Room) do Miejsca i Seansu
         Room room = new Room();
         room.setName("Sala 1");
         entityManager.persist(room);
 
-        // 3. Potrzebujemy Miejsc (Seat) w tej Sali
         Seat seat1 = new Seat();
         seat1.setRoom(room);
         seat1.setRowNumber(1);
@@ -84,14 +80,14 @@ class SalesStatsDAOTest {
         order.setTotalCost(BigDecimal.ZERO);
         entityManager.persist(order);
 
-        // --- WHEN (Wywołanie metody pomocniczej) ---
+        // when
 
         createTicket(order, screening, seat1, normalType);
         createTicket(order, screening, seat2, normalType);
 
-        entityManager.flush(); // Wypchnij wszystko do bazy H2
+        entityManager.flush();
 
-        // --- THEN (Sprawdzamy DAO) ---
+        // then
         List<DailySalesStatsDTO> stats = salesStatsDAO.getDailySalesStats();
 
         assertThat(stats).isNotEmpty();
@@ -101,7 +97,6 @@ class SalesStatsDAOTest {
         assertThat(todayStats.getTotalRevenue()).isEqualByComparingTo("40.00"); // 2 * 20.00
     }
 
-    // --- TEST 8: INSERT z update() (Logowanie dostępu) ---
     @Test
     @DisplayName("Should insert a log entry")
     void testLogReportAccess() {
@@ -109,19 +104,16 @@ class SalesStatsDAOTest {
         salesStatsDAO.logReportAccess("admin_user");
 
         // then
-        // Sprawdzamy bezpośrednio JDBC czy wiersz powstał
         Integer count = jdbcTemplate.queryForObject(
                 "SELECT COUNT(*) FROM report_logs WHERE username = 'admin_user'", Integer.class);
 
         assertThat(count).isEqualTo(1);
     }
 
-    // --- TEST 9: DELETE z update() (Czyszczenie starych logów) ---
     @Test
     @DisplayName("Should delete old logs")
     void testClearLogsOlderThan() {
         // given
-        // Ręcznie wstawiamy stary log SQL-em (bo DataJpaTest pozwala na SQL)
         jdbcTemplate.update("INSERT INTO report_logs (username, accessed_at) VALUES (?, ?)",
                 "old_user", LocalDateTime.now().minusDays(40));
 
@@ -138,7 +130,6 @@ class SalesStatsDAOTest {
                 .isEqualTo(remaining);
     }
 
-    // --- TEST 10: UPDATE z update() (Anonimizacja) ---
     @Test
     @DisplayName("Should update username to ANONYMOUS")
     void testAnonymizeLogs() {
@@ -155,20 +146,16 @@ class SalesStatsDAOTest {
         assertThat(newName).isEqualTo("ANONYMOUS");
     }
 
-    // Metoda pomocnicza w klasie testowej
     private void createTicket(Order order, Screening screening, Seat seat, TicketType ticketType) {
         Ticket ticket = new Ticket();
 
-        // 1. Ustawiamy relacje (muszą być wcześniej zapisane w bazie!)
         ticket.setOrder(order);
         ticket.setScreening(screening);
         ticket.setSeat(seat);
         ticket.setTicketType(ticketType);
 
-        // 2. Ustawiamy cenę (bierzemy z typu biletu lub wpisujemy na sztywno)
         ticket.setPrice(ticketType.getPrice());
 
-        // 3. Zapisujemy bilet
         entityManager.persist(ticket);
     }
 }

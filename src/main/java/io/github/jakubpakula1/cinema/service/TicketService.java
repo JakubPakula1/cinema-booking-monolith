@@ -6,6 +6,7 @@ import io.github.jakubpakula1.cinema.model.User;
 import io.github.jakubpakula1.cinema.repository.TicketRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.nio.file.AccessDeniedException;
 import java.util.List;
@@ -15,6 +16,8 @@ import java.util.List;
 public class TicketService {
     private final TicketRepository ticketRepository;
     private final UserService userService;
+
+    @Transactional(readOnly = true)
     public List<Ticket> getTicketsByOrderId(Long orderId, String email) throws AccessDeniedException {
         List<Ticket> tickets = ticketRepository.findAllByOrderId(orderId);
 
