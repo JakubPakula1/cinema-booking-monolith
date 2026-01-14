@@ -153,7 +153,7 @@ public class AdminScreeningViewControllerTest {
                 .param("roomId", "1")
                 .param("screeningTime", "2024-12-31T18:00"))
                 .andExpect(status().is3xxRedirection())
-                .andExpect(redirectedUrl("/screenings"));
+                .andExpect(redirectedUrl("/admin/screenings"));
 
         verify(screeningService, times(1)).createScreening(any(ScreeningDTO.class));
     }

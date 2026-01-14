@@ -42,11 +42,12 @@ public class AdminScreeningViewController {
     public String addScreening(@ModelAttribute ScreeningDTO screeningDTO, Model model) {
         try{
             screeningService.createScreening(screeningDTO);
-            return "redirect:/screenings";
+            return "redirect:/admin/screenings";
         } catch (ScreeningOverlapException | ScreeningDateInPastException e) {
             model.addAttribute("errorMessage", e.getMessage());
 
             model.addAttribute("movies", movieService.getAllMovies());
+            model.addAttribute("action", "add");
             model.addAttribute("rooms", roomService.getAllRooms());
             model.addAttribute("screening", screeningDTO);
             return "screening/admin/screening-form";

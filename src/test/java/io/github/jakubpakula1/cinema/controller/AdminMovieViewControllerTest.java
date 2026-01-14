@@ -5,12 +5,9 @@ import io.github.jakubpakula1.cinema.dto.MovieFormDTO;
 
 import io.github.jakubpakula1.cinema.enums.MovieGenre;
 import io.github.jakubpakula1.cinema.model.Movie;
-import io.github.jakubpakula1.cinema.repository.projection.MovieListView;
+import io.github.jakubpakula1.cinema.repository.projection.MovieListViewDTO;
 import io.github.jakubpakula1.cinema.security.SecurityConfig;
 import io.github.jakubpakula1.cinema.service.MovieService;
-import io.github.jakubpakula1.cinema.service.RoomService;
-import io.github.jakubpakula1.cinema.service.ScreeningService;
-import io.github.jakubpakula1.cinema.service.UserService;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -41,15 +38,6 @@ public class AdminMovieViewControllerTest {
 
     @MockitoBean
     private MovieService movieService;
-
-    @MockitoBean
-    private UserService userService;
-
-    @MockitoBean
-    private ScreeningService screeningService;
-
-    @MockitoBean
-    private RoomService roomService;
 
     @Test
     @DisplayName("Should forbid adding movie for normal user")
@@ -92,11 +80,11 @@ public class AdminMovieViewControllerTest {
     @DisplayName("Should display all movies list")
     void shouldDisplayAllMoviesList() throws Exception {
         // Given
-        List<MovieListView> movies = List.of(
+        List<MovieListViewDTO> movies = List.of(
                 createMovieListView(1L, "Inception", "Christopher Nolan"),
                 createMovieListView(2L, "The Dark Knight", "Christopher Nolan")
         );
-        Page<MovieListView> page = new PageImpl<>(movies);
+        Page<MovieListViewDTO> page = new PageImpl<>(movies);
 
         when(movieService.getAllMoviesProjected(0, 100)).thenReturn(page);
 
@@ -358,7 +346,7 @@ public class AdminMovieViewControllerTest {
     @DisplayName("Should display empty movies list when no movies exist")
     void shouldDisplayEmptyMoviesListWhenNoMoviesExist() throws Exception {
         // Given
-        Page<MovieListView> emptyPage = new PageImpl<>(List.of());
+        Page<MovieListViewDTO> emptyPage = new PageImpl<>(List.of());
         when(movieService.getAllMoviesProjected(0, 100)).thenReturn(emptyPage);
 
         // When & Then
@@ -371,16 +359,16 @@ public class AdminMovieViewControllerTest {
     }
 
     // Helper methods
-    private MovieListView createMovieListView(Long id, String title, String director) {
-        MovieListView mockView = mock(MovieListView.class);
-        when(mockView.getId()).thenReturn(id);
-        when(mockView.getTitle()).thenReturn(title);
-        when(mockView.getDirector()).thenReturn(director);
-        when(mockView.getReleaseYear()).thenReturn(2024);
-        when(mockView.getDurationInMinutes()).thenReturn(120);
-        when(mockView.getPosterFileName()).thenReturn("poster.jpg");
-        when(mockView.getGenre()).thenReturn("THRILLER");
-        return mockView;
+    private MovieListViewDTO createMovieListView(Long id, String title, String director) {
+        return new MovieListViewDTO(
+                id,
+                title,
+                MovieGenre.THRILLER,
+                director,
+                2024,
+                120,
+                "poster.jpg"
+        );
     }
 
     private MovieFormDTO createMovieFormDTO(Long id, String title) {

@@ -2,8 +2,8 @@ package io.github.jakubpakula1.cinema.repository;
 
 import io.github.jakubpakula1.cinema.model.Movie;
 import io.github.jakubpakula1.cinema.repository.projection.MovieCarouselDTO;
-import io.github.jakubpakula1.cinema.repository.projection.MovieListView;
 
+import io.github.jakubpakula1.cinema.repository.projection.MovieListViewDTO;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -15,7 +15,8 @@ import java.util.List;
 @Repository
 public interface MovieRepository extends JpaRepository<Movie, Long>{
 
-    Page<MovieListView> findAllProjectedBy(Pageable pageable);
+    Page<MovieListViewDTO> findAllProjectedBy(Pageable pageable);
+
 
     @Query("SELECT new io.github.jakubpakula1.cinema.repository.projection.MovieCarouselDTO(" +
             "m.id, " +

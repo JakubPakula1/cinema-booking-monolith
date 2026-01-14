@@ -6,7 +6,7 @@ import io.github.jakubpakula1.cinema.exception.ResourceNotFoundException;
 import io.github.jakubpakula1.cinema.model.Movie;
 import io.github.jakubpakula1.cinema.repository.MovieRepository;
 import io.github.jakubpakula1.cinema.repository.projection.MovieCarouselDTO;
-import io.github.jakubpakula1.cinema.repository.projection.MovieListView;
+import io.github.jakubpakula1.cinema.repository.projection.MovieListViewDTO;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -94,10 +94,10 @@ class MovieServiceTest {
     @Test
     @DisplayName("Should get all movies projected")
     void testGetAllMoviesProjected() {
-        MovieListView mockView = mock(MovieListView.class);
-        Page<MovieListView> mockPage = new PageImpl<>(List.of(mockView), PageRequest.of(0, 10), 1);
+        MovieListViewDTO mockView = mock(MovieListViewDTO.class);
+        Page<MovieListViewDTO> mockPage = new PageImpl<>(List.of(mockView), PageRequest.of(0, 10), 1);
         when(movieRepository.findAllProjectedBy(any(PageRequest.class))).thenReturn(mockPage);
-        Page<MovieListView> result = movieService.getAllMoviesProjected(0, 10);
+        Page<MovieListViewDTO> result = movieService.getAllMoviesProjected(0, 10);
         assertThat(result).isNotNull().hasSize(1);
         verify(movieRepository).findAllProjectedBy(any(PageRequest.class));
     }
@@ -253,7 +253,7 @@ class MovieServiceTest {
     @Test
     @DisplayName("Should verify correct page request parameters")
     void testGetAllMoviesProjected_CorrectPageRequest() {
-        Page<MovieListView> emptyPage = new PageImpl<>(List.of(), PageRequest.of(2, 5), 0);
+        Page<MovieListViewDTO> emptyPage = new PageImpl<>(List.of(), PageRequest.of(2, 5), 0);
         when(movieRepository.findAllProjectedBy(any(PageRequest.class))).thenReturn(emptyPage);
         movieService.getAllMoviesProjected(2, 5);
         ArgumentCaptor<PageRequest> pageCaptor = ArgumentCaptor.forClass(PageRequest.class);

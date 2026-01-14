@@ -1,7 +1,7 @@
 package io.github.jakubpakula1.cinema.controller.view.admin;
 
 import io.github.jakubpakula1.cinema.dto.MovieFormDTO;
-import io.github.jakubpakula1.cinema.repository.projection.MovieListView;
+import io.github.jakubpakula1.cinema.repository.projection.MovieListViewDTO;
 import io.github.jakubpakula1.cinema.service.MovieService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -21,7 +21,7 @@ public class AdminMovieViewController {
 
     @GetMapping
     public String showAdminMovieList(Model model) {
-        Page<MovieListView> movies = movieService.getAllMoviesProjected(0, 100);
+        Page<MovieListViewDTO> movies = movieService.getAllMoviesProjected(0, 100);
         model.addAttribute("movies", movies.getContent());
         return "movies/admin/movie-list";
     }

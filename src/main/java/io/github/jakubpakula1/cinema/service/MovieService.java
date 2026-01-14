@@ -5,7 +5,7 @@ import io.github.jakubpakula1.cinema.exception.ResourceNotFoundException;
 import io.github.jakubpakula1.cinema.model.Movie;
 import io.github.jakubpakula1.cinema.repository.MovieRepository;
 import io.github.jakubpakula1.cinema.repository.projection.MovieCarouselDTO;
-import io.github.jakubpakula1.cinema.repository.projection.MovieListView;
+import io.github.jakubpakula1.cinema.repository.projection.MovieListViewDTO;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -36,7 +36,7 @@ public class MovieService {
         return movieRepository.findAll();
     }
 
-    public Page<MovieListView> getAllMoviesProjected(int page, int size) {
+    public Page<MovieListViewDTO> getAllMoviesProjected(int page, int size) {
         return movieRepository.findAllProjectedBy(PageRequest.of(page, size));
     }
 

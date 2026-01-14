@@ -3,7 +3,7 @@ package io.github.jakubpakula1.cinema.controller;
 import io.github.jakubpakula1.cinema.controller.view.MovieViewController;
 import io.github.jakubpakula1.cinema.enums.MovieGenre;
 import io.github.jakubpakula1.cinema.model.Movie;
-import io.github.jakubpakula1.cinema.repository.projection.MovieListView;
+import io.github.jakubpakula1.cinema.repository.projection.MovieListViewDTO;
 import io.github.jakubpakula1.cinema.security.SecurityConfig;
 import io.github.jakubpakula1.cinema.service.MovieService;
 import io.github.jakubpakula1.cinema.service.UserService;
@@ -44,11 +44,11 @@ class MovieControllerTest {
     @WithMockUser(roles = "USER")
     void shouldShowMovieList() throws Exception {
         // given
-        MovieListView movie1 = mock(MovieListView.class);
-        MovieListView movie2 = mock(MovieListView.class);
-        Page<MovieListView> movies = new PageImpl<>(List.of(movie1, movie2));
+        MovieListViewDTO movie1 = mock(MovieListViewDTO.class);
+        MovieListViewDTO movie2 = mock(MovieListViewDTO.class);
+        Page<MovieListViewDTO> movies = new PageImpl<>(List.of(movie1, movie2));
 
-        when(movieService.getAllMoviesProjected(0,12)).thenReturn(movies);
+        when(movieService.getAllMoviesProjected(0,8)).thenReturn(movies);
 
         // when & then
         mockMvc.perform(get("/movies"))
@@ -56,7 +56,7 @@ class MovieControllerTest {
                 .andExpect(view().name("movies/movie-list"))
                 .andExpect(model().attribute("moviePage", movies));
 
-        verify(movieService).getAllMoviesProjected(0,12);
+        verify(movieService).getAllMoviesProjected(0,8);
     }
     @Test
     @DisplayName("Should show movie details page for valid movie ID")
